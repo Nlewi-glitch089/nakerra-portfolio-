@@ -1,0 +1,571 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta
+    name="description"
+    content="Nakerra Lewis — Software Engineer. Clean, responsive websites for small businesses and independent brands."
+  />
+  <title>Nakerra Lewis — Software Engineer</title>
+  <link rel="icon" type="image/svg+xml" href="assets/images/favicon.svg" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <a href="#main" class="skip-link">Skip to content</a>
+
+  <!-- ============ HEADER / NAV ============ -->
+  <header class="header" id="site-header">
+    <div class="container header__inner">
+      <a href="#home" class="header__brand">
+        <span class="header__brand-mark" aria-hidden="true"></span>
+        <span class="header__brand-name">Nakerra Lewis</span>
+        <span class="header__brand-role">Software Engineer</span>
+      </a>
+
+      <nav class="header__nav" aria-label="Primary">
+        <ul>
+          <li><a href="#home" class="nav-link is-active">Home</a></li>
+          <li><a href="#about" class="nav-link">About</a></li>
+          <li><a href="#work" class="nav-link">Work</a></li>
+          <li><a href="#services" class="nav-link">Services</a></li>
+          <li><a href="#experience" class="nav-link">Experience</a></li>
+          <li><a href="#contact" class="nav-link">Contact</a></li>
+        </ul>
+      </nav>
+
+      <button
+        type="button"
+        class="header__menu-btn"
+        id="menu-btn"
+        aria-expanded="false"
+        aria-controls="mobile-nav"
+        aria-label="Open menu"
+      >
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+
+    <div class="header__mobile-nav" id="mobile-nav">
+      <ul>
+        <li><a href="#home" class="mobile-nav-link">Home</a></li>
+        <li><a href="#about" class="mobile-nav-link">About</a></li>
+        <li><a href="#work" class="mobile-nav-link">Work</a></li>
+        <li><a href="#services" class="mobile-nav-link">Services</a></li>
+        <li><a href="#experience" class="mobile-nav-link">Experience</a></li>
+        <li><a href="#contact" class="mobile-nav-link">Contact</a></li>
+      </ul>
+    </div>
+  </header>
+
+  <main id="main">
+    <!-- ============ HERO ============ -->
+    <section id="home" class="hero">
+      <div class="container hero__inner">
+        <div class="hero__content">
+          <p class="hero__eyebrow mono">
+            <span class="hero__eyebrow-dot" aria-hidden="true"></span>
+            Open to select freelance &amp; client work
+          </p>
+
+          <h1 class="hero__title">
+            I take things apart to understand how they work — then I bring
+            that same <span class="hero__title-accent">curiosity</span> to
+            building software.
+          </h1>
+
+          <p class="hero__subtitle">Nakerra Lewis — Software Engineer</p>
+
+          <p class="hero__description">
+            I build clean, responsive websites for small businesses and
+            independent brands — easy to use, easy to maintain, and built
+            around what your customers actually need to do.
+          </p>
+
+          <div class="hero__actions">
+            <a href="#work" class="btn btn-primary">View my work</a>
+            <a href="#contact" class="text-link hero__secondary-link">Work with me</a>
+          </div>
+
+          <dl class="hero__stats">
+            <div>
+              <dt class="mono">Core stack</dt>
+              <dd>HTML / CSS / JS</dd>
+            </div>
+            <div>
+              <dt class="mono">Design approach</dt>
+              <dd>UX-minded</dd>
+            </div>
+            <div>
+              <dt class="mono">Focus</dt>
+              <dd>Small business &amp; client sites</dd>
+            </div>
+            <div>
+              <dt class="mono">Currently</dt>
+              <dd>Building &amp; taking on client work</dd>
+            </div>
+          </dl>
+        </div>
+
+        <div class="hero__graphic" aria-hidden="true">
+          <svg class="technical-graphic" viewBox="0 0 420 420" fill="none" focusable="false">
+            <circle cx="210" cy="210" r="160" stroke="var(--color-border)" />
+            <circle cx="210" cy="210" r="110" stroke="var(--color-border)" stroke-dasharray="4 6" />
+
+            <line x1="210" y1="20" x2="210" y2="60" stroke="var(--color-border)" />
+            <line x1="210" y1="360" x2="210" y2="400" stroke="var(--color-border)" />
+            <line x1="20" y1="210" x2="60" y2="210" stroke="var(--color-border)" />
+            <line x1="360" y1="210" x2="400" y2="210" stroke="var(--color-border)" />
+
+            <line x1="210" y1="210" x2="120" y2="130" stroke="var(--color-accent)" stroke-width="1.5" />
+            <line x1="210" y1="210" x2="300" y2="160" stroke="var(--color-accent)" stroke-width="1.5" />
+            <line x1="210" y1="210" x2="150" y2="300" stroke="var(--color-border)" stroke-width="1.5" />
+
+            <!-- rotating sweep lines — a slow scan across the diagram, not a literal clock -->
+            <line class="technical-graphic__hand technical-graphic__hand--fast" x1="210" y1="210" x2="210" y2="55" stroke="var(--color-accent)" stroke-width="2" stroke-linecap="round" opacity="0.55" />
+            <line class="technical-graphic__hand technical-graphic__hand--slow" x1="210" y1="210" x2="320" y2="210" stroke="var(--color-text-subtle)" stroke-width="1.5" stroke-linecap="round" opacity="0.55" />
+
+            <circle cx="120" cy="130" r="5" fill="var(--color-bg)" stroke="var(--color-accent)" stroke-width="1.5" />
+            <circle cx="300" cy="160" r="5" fill="var(--color-bg)" stroke="var(--color-accent)" stroke-width="1.5" />
+            <circle cx="150" cy="300" r="4" fill="var(--color-bg)" stroke="var(--color-warm)" stroke-width="1.5" />
+            <circle class="technical-graphic__center" cx="210" cy="210" r="7" fill="var(--color-accent)" />
+
+            <text x="222" y="216" class="technical-graphic__label mono" fill="var(--color-text-subtle)">NL_01</text>
+            <text x="158" y="318" class="technical-graphic__label mono" fill="var(--color-warm)">curiosity</text>
+          </svg>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ ABOUT ============ -->
+    <section id="about" class="section about">
+      <div class="container about__grid">
+        <div class="about__copy">
+          <div class="section-heading">
+            <p class="section-heading__eyebrow mono">
+              <span class="section-heading__index">01</span>
+              <span aria-hidden="true">/</span>
+              <span>About</span>
+              <span class="section-heading__rule" aria-hidden="true"></span>
+            </p>
+            <h2 class="section-heading__title">I've always wanted to know how things work.</h2>
+          </div>
+
+          <p>
+            Growing up, that meant taking things apart — old electronics,
+            broken appliances, anything I could get my hands on — just to
+            see what was inside and how the pieces fit together.
+          </p>
+          <p>
+            Not everything went back together the way it started. Sometimes
+            I could fix what was wrong or work out the problem; other times
+            I couldn't get it running again — but even then, taking it apart
+            taught me how it was built and showed me exactly where it
+            failed.
+          </p>
+          <p>
+            That same curiosity eventually pointed itself at software. I
+            started by learning the actual fundamentals of programming —
+            how the pieces fit together and why — and once that clicked, I
+            had what I needed to start building software and websites on my
+            own. I still work the same way I always have: figure out the
+            logic first, then build.
+          </p>
+          <p>
+            Today I bring that same hands-on, figure-it-out approach to
+            client work: <strong>listening closely, building deliberately,
+            and treating every project like something worth getting right.</strong>
+          </p>
+        </div>
+
+        <ol class="about__timeline">
+          <li class="about__timeline-item">
+            <div class="about__timeline-marker" aria-hidden="true">
+              <span class="about__timeline-dot"></span>
+              <span class="about__timeline-line"></span>
+            </div>
+            <div>
+              <span class="about__timeline-label mono">early</span>
+              <h3 class="about__timeline-title">Curiosity first</h3>
+              <p class="about__timeline-description">
+                Grew up taking apart anything broken — appliances,
+                electronics, whatever I could get into — just to see how it
+                worked.
+              </p>
+            </div>
+          </li>
+          <li class="about__timeline-item">
+            <div class="about__timeline-marker" aria-hidden="true">
+              <span class="about__timeline-dot"></span>
+              <span class="about__timeline-line"></span>
+            </div>
+            <div>
+              <span class="about__timeline-label mono">then</span>
+              <h3 class="about__timeline-title">Learned the fundamentals</h3>
+              <p class="about__timeline-description">
+                Learned how programming actually works, then used that
+                foundation to start building software and websites.
+              </p>
+            </div>
+          </li>
+          <li class="about__timeline-item">
+            <div class="about__timeline-marker" aria-hidden="true">
+              <span class="about__timeline-dot"></span>
+            </div>
+            <div>
+              <span class="about__timeline-label mono">now</span>
+              <h3 class="about__timeline-title">Software Engineer</h3>
+              <p class="about__timeline-description">
+                Building software professionally, and taking on freelance
+                website work for small businesses and independent brands.
+              </p>
+            </div>
+          </li>
+        </ol>
+      </div>
+    </section>
+
+    <!-- ============ WORK ============ -->
+    <section id="work" class="section work">
+      <div class="container">
+        <div class="section-heading">
+          <p class="section-heading__eyebrow mono">
+            <span class="section-heading__index">02</span>
+            <span aria-hidden="true">/</span>
+            <span>Work</span>
+            <span class="section-heading__rule" aria-hidden="true"></span>
+          </p>
+          <h2 class="section-heading__title">Selected work</h2>
+          <p class="section-heading__description">
+            Live websites I've built for small businesses — from initial
+            build to a finished, working site.
+          </p>
+        </div>
+
+        <div class="work__grid">
+          <article class="work-card">
+            <div class="work-card__top">
+              <span class="work-card__index mono">01</span>
+              <span class="work-card__type mono">Website project</span>
+            </div>
+            <h3 class="work-card__name">Japanese Women's Leadership Initiative</h3>
+            <p class="work-card__description">
+              An informational website for JWLI, a nonprofit that runs a
+              leadership training program for emerging women leaders from
+              Japan.
+            </p>
+            <div class="work-card__meta">
+              <span class="work-card__role-label mono">Role</span>
+              <span class="work-card__role">Design &amp; development</span>
+            </div>
+            <ul class="work-card__tags">
+              <li class="work-card__tag mono">HTML</li>
+              <li class="work-card__tag mono">CSS</li>
+              <li class="work-card__tag mono">JavaScript</li>
+              <li class="work-card__tag mono">Responsive Design</li>
+            </ul>
+            <a href="https://jwli-info.netlify.app" target="_blank" rel="noreferrer noopener" class="work-card__link text-link">View live site ↗</a>
+          </article>
+
+          <article class="work-card">
+            <div class="work-card__top">
+              <span class="work-card__index mono">02</span>
+              <span class="work-card__type mono">Website project</span>
+            </div>
+            <h3 class="work-card__name">Slack Tide Lobster Shack</h3>
+            <p class="work-card__description">
+              A small business website for a seasonal lobster restaurant on
+              the wharf in Harpswell, Maine, covering the menu, hours, and
+              location.
+            </p>
+            <div class="work-card__meta">
+              <span class="work-card__role-label mono">Role</span>
+              <span class="work-card__role">Design &amp; development</span>
+            </div>
+            <ul class="work-card__tags">
+              <li class="work-card__tag mono">HTML</li>
+              <li class="work-card__tag mono">CSS</li>
+              <li class="work-card__tag mono">JavaScript</li>
+              <li class="work-card__tag mono">Responsive Design</li>
+            </ul>
+            <a href="https://lobster-maine.netlify.app" target="_blank" rel="noreferrer noopener" class="work-card__link text-link">View live site ↗</a>
+          </article>
+
+          <article class="work-card">
+            <div class="work-card__top">
+              <span class="work-card__index mono">03</span>
+              <span class="work-card__type mono">Website project</span>
+            </div>
+            <h3 class="work-card__name">Two Street Water Ice</h3>
+            <p class="work-card__description">
+              A small business website for a seasonal water ice stand in
+              Philadelphia's Pennsport neighborhood, covering the menu,
+              hours, and location.
+            </p>
+            <div class="work-card__meta">
+              <span class="work-card__role-label mono">Role</span>
+              <span class="work-card__role">Design &amp; development</span>
+            </div>
+            <ul class="work-card__tags">
+              <li class="work-card__tag mono">HTML</li>
+              <li class="work-card__tag mono">CSS</li>
+              <li class="work-card__tag mono">JavaScript</li>
+              <li class="work-card__tag mono">Responsive Design</li>
+            </ul>
+            <a href="https://philly-water.netlify.app" target="_blank" rel="noreferrer noopener" class="work-card__link text-link">View live site ↗</a>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ SERVICES ============ -->
+    <section id="services" class="section services">
+      <div class="container">
+        <div class="section-heading">
+          <p class="section-heading__eyebrow mono">
+            <span class="section-heading__index">03</span>
+            <span aria-hidden="true">/</span>
+            <span>Services</span>
+            <span class="section-heading__rule" aria-hidden="true"></span>
+          </p>
+          <h2 class="section-heading__title">Work with me</h2>
+          <p class="section-heading__description">
+            I help small businesses and independent brands get a website
+            that actually works for them — clear, fast, and easy to use. No
+            jargon, no overpromising, just a site built around what your
+            customers need to do.
+          </p>
+        </div>
+
+        <div class="services__grid">
+          <article class="service-card">
+            <div class="service-card__top">
+              <span class="service-card__icon" aria-hidden="true">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--color-accent)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+                  <rect x="3" y="4" width="18" height="16" rx="2" />
+                  <line x1="3" y1="9" x2="21" y2="9" />
+                  <line x1="7.5" y1="9" x2="7.5" y2="20" />
+                </svg>
+              </span>
+              <span class="service-card__index mono">01</span>
+            </div>
+            <h3 class="service-card__title">Small Business Websites</h3>
+            <p class="service-card__description">
+              A clean, professional website that clearly communicates who
+              your business is, what it offers, and how people can get in
+              touch — built to be easy for you to maintain.
+            </p>
+          </article>
+
+          <article class="service-card">
+            <div class="service-card__top">
+              <span class="service-card__icon" aria-hidden="true">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--color-accent)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M3 12a9 9 0 1 1 3.4 7.05" />
+                  <polyline points="3 16.5 3 20.5 7 20.5" />
+                </svg>
+              </span>
+              <span class="service-card__index mono">02</span>
+            </div>
+            <h3 class="service-card__title">Website Refreshes &amp; Redesigns</h3>
+            <p class="service-card__description">
+              A refresh for a site that's fallen behind — updated design,
+              clearer structure, and a faster, more usable experience.
+            </p>
+          </article>
+
+          <article class="service-card">
+            <div class="service-card__top">
+              <span class="service-card__icon" aria-hidden="true">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--color-accent)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+                  <rect x="2.5" y="5" width="13" height="10" rx="1.5" />
+                  <rect x="13.5" y="10.5" width="8" height="10.5" rx="1.5" />
+                </svg>
+              </span>
+              <span class="service-card__index mono">03</span>
+            </div>
+            <h3 class="service-card__title">Responsive Improvements</h3>
+            <p class="service-card__description">
+              Already have a site that struggles on phones or tablets? I'll
+              rework the layout so it holds up on every screen size.
+            </p>
+          </article>
+
+          <article class="service-card">
+            <div class="service-card__top">
+              <span class="service-card__icon" aria-hidden="true">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--color-accent)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+                  <line x1="4" y1="6" x2="20" y2="6" />
+                  <circle cx="9" cy="6" r="1.8" fill="var(--color-surface)" />
+                  <line x1="4" y1="12" x2="20" y2="12" />
+                  <circle cx="15.5" cy="12" r="1.8" fill="var(--color-surface)" />
+                  <line x1="4" y1="18" x2="20" y2="18" />
+                  <circle cx="11.5" cy="18" r="1.8" fill="var(--color-surface)" />
+                </svg>
+              </span>
+              <span class="service-card__index mono">04</span>
+            </div>
+            <h3 class="service-card__title">UX / Interface Polish</h3>
+            <p class="service-card__description">
+              A pass over an existing site to tighten navigation, spacing,
+              and flow so it's genuinely easy for people to use.
+            </p>
+          </article>
+        </div>
+
+        <p class="services__note">Currently taking on a limited number of freelance projects.</p>
+      </div>
+    </section>
+
+    <!-- ============ EXPERIENCE & SKILLS ============ -->
+    <section id="experience" class="section experience">
+      <div class="container">
+        <div class="section-heading">
+          <p class="section-heading__eyebrow mono">
+            <span class="section-heading__index">04</span>
+            <span aria-hidden="true">/</span>
+            <span>Experience &amp; Skills</span>
+            <span class="section-heading__rule" aria-hidden="true"></span>
+          </p>
+          <h2 class="section-heading__title">What I bring to a project</h2>
+        </div>
+
+        <div class="experience__grid">
+          <div class="experience__current">
+            <span class="experience__current-label mono">Currently</span>
+            <p>
+              Currently working as a Software Engineer, and taking on
+              freelance website work for small businesses and independent
+              brands — always looking for the next project to bring to
+              life.
+            </p>
+
+            <div class="experience__skills">
+              <div class="skill-group">
+                <h4 class="skill-group__title mono">Languages &amp; Markup</h4>
+                <ul class="skill-group__list">
+                  <li class="skill-group__tag">HTML</li>
+                  <li class="skill-group__tag">CSS</li>
+                  <li class="skill-group__tag">JavaScript</li>
+                </ul>
+              </div>
+              <div class="skill-group">
+                <h4 class="skill-group__title mono">Practice / Design</h4>
+                <ul class="skill-group__list">
+                  <li class="skill-group__tag">Responsive Web Design</li>
+                  <li class="skill-group__tag">UX / UI Design</li>
+                </ul>
+              </div>
+              <div class="skill-group">
+                <h4 class="skill-group__title mono">Tools &amp; Workflow</h4>
+                <ul class="skill-group__list">
+                  <li class="skill-group__tag">Git</li>
+                  <li class="skill-group__tag">GitHub</li>
+                  <li class="skill-group__tag">VS Code</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <ul class="experience__principles">
+            <li class="experience__principle">
+              <span class="experience__principle-arrow" aria-hidden="true">→</span>
+              <div>
+                <h3 class="experience__principle-title">I listen before I build</h3>
+                <p class="experience__principle-description">
+                  Every project starts with understanding the actual problem
+                  — not jumping straight to code.
+                </p>
+              </div>
+            </li>
+            <li class="experience__principle">
+              <span class="experience__principle-arrow" aria-hidden="true">→</span>
+              <div>
+                <h3 class="experience__principle-title">I build with intention</h3>
+                <p class="experience__principle-description">
+                  Clean structure, considered layout, and code that's
+                  organized enough for someone else to pick up.
+                </p>
+              </div>
+            </li>
+            <li class="experience__principle">
+              <span class="experience__principle-arrow" aria-hidden="true">→</span>
+              <div>
+                <h3 class="experience__principle-title">I design for real people</h3>
+                <p class="experience__principle-description">
+                  A site should be easy to use on a phone in a parking lot,
+                  not just look good on a laptop.
+                </p>
+              </div>
+            </li>
+            <li class="experience__principle">
+              <span class="experience__principle-arrow" aria-hidden="true">→</span>
+              <div>
+                <h3 class="experience__principle-title">I stay curious</h3>
+                <p class="experience__principle-description">
+                  If I don't know how to do something yet, I figure it out —
+                  that's the whole reason I'm here.
+                </p>
+              </div>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ CONTACT ============ -->
+    <section id="contact" class="section contact">
+      <div class="container">
+        <div class="section-heading">
+          <p class="section-heading__eyebrow mono">
+            <span class="section-heading__index">05</span>
+            <span aria-hidden="true">/</span>
+            <span>Contact</span>
+            <span class="section-heading__rule" aria-hidden="true"></span>
+          </p>
+        </div>
+
+        <div class="contact__panel">
+          <span class="contact__badge mono">
+            <span class="contact__badge-dot" aria-hidden="true"></span>
+            Open to freelance &amp; client work
+          </span>
+
+          <h2 class="contact__title">Have a project in mind? Let's build it.</h2>
+          <p class="contact__description">
+            I take on a limited number of freelance projects at a time — if
+            you need a website that's clean, fast, and actually works for
+            your business, I'd love to hear about it.
+          </p>
+
+          <ul class="contact__links">
+            <li>
+              <span class="contact__link-label mono">Email</span>
+              <a href="mailto:lewisnakerra@gmail.com" class="text-link">lewisnakerra@gmail.com</a>
+            </li>
+            <li>
+              <span class="contact__link-label mono">GitHub</span>
+              <a href="https://github.com/Nlewi-glitch089" target="_blank" rel="noreferrer noopener" class="text-link">github.com/Nlewi-glitch089</a>
+            </li>
+            <li>
+              <span class="contact__link-label mono">LinkedIn</span>
+              <a href="https://www.linkedin.com/in/nakerra-lewis-027827318/" target="_blank" rel="noreferrer noopener" class="text-link">linkedin.com/in/nakerra-lewis</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- ============ FOOTER ============ -->
+  <footer class="footer">
+    <div class="container footer__inner">
+      <p class="mono">© <span id="year"></span> Nakerra Lewis. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
