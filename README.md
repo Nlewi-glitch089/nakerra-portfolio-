@@ -1,6 +1,6 @@
 # Nakerra Lewis — Portfolio
 
-The personal portfolio and freelance website of Nakerra Lewis, Software Engineer. It's a single-page site that introduces who I am, shows selected projects, lays out the services I offer for client work, and gives visitors a clear way to get in touch.
+My personal portfolio and freelance website. It's a single-page site that introduces who I am, shows selected projects, lays out the services I offer for client work, and gives visitors a clear way to get in touch.
 
 ## Overview
 
