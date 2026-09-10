@@ -4,13 +4,17 @@
 :root {
   --color-bg: #0a0d13;
   --color-surface: #141925;
+  --color-surface-raised: #171d2b;
   --color-text: #e9ecf4;
   --color-text-muted: #a1aab6;
   --color-text-subtle: #697080;
   --color-accent: #6c97f2;
   --color-accent-deep: #5e88d3;
+  --color-accent-soft: rgba(108, 151, 242, 0.12);
   --color-warm: #e6a45e;
+  --color-warm-soft: rgba(230, 164, 94, 0.14);
   --color-border: #2a3140;
+  --color-border-soft: rgba(42, 49, 64, 0.6);
 
   --font-sans:
     'Segoe UI', system-ui, -apple-system, Roboto, Helvetica, Arial, sans-serif;
@@ -19,6 +23,16 @@
   --container-max: 1180px;
   --section-pad-y: clamp(3.5rem, 7vw, 6rem);
   --header-height: 76px;
+
+  /* depth: used sparingly so elevation reads as intentional, not decorative */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.35);
+  --shadow-md: 0 12px 32px -12px rgba(0, 0, 0, 0.55);
+  --shadow-lg: 0 24px 60px -20px rgba(0, 0, 0, 0.6);
+  --glow-accent: 0 0 0 1px rgba(108, 151, 242, 0.35), 0 16px 40px -16px rgba(108, 151, 242, 0.35);
+  --glow-warm: 0 0 0 1px rgba(230, 164, 94, 0.4), 0 12px 32px -14px rgba(230, 164, 94, 0.4);
+
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --reveal-duration: 0.7s;
 
   color-scheme: dark;
 }
@@ -118,6 +132,37 @@ section[id],
 }
 
 /* =============================================================
+   PROGRESSIVE-ENHANCEMENT / SCROLL-REVEAL SYSTEM
+   `no-js` is removed by an inline head script before first paint, so
+   real browsers get the animated version and non-JS visitors always
+   see full content with no hidden state.
+   ============================================================= */
+[data-reveal] {
+  opacity: 0;
+  transform: translateY(22px);
+  transition: opacity var(--reveal-duration) var(--ease-out),
+    transform var(--reveal-duration) var(--ease-out);
+  transition-delay: var(--reveal-delay, 0s);
+}
+
+[data-reveal].is-revealed {
+  opacity: 1;
+  transform: none;
+}
+
+.no-js [data-reveal] {
+  opacity: 1;
+  transform: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [data-reveal] {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* =============================================================
    LAYOUT HELPERS
    ============================================================= */
 .container {
@@ -130,6 +175,7 @@ section[id],
 .section {
   padding-block: var(--section-pad-y);
   border-top: 1px solid var(--color-border);
+  position: relative;
 }
 
 .mono {
@@ -166,6 +212,31 @@ section[id],
   top: 1rem;
 }
 
+/* Reusable "status" pill — dot + label — shared by the hero eyebrow,
+   services availability note, and contact badge for a consistent voice */
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  border: 1px solid var(--color-border);
+  border-radius: 999px;
+  padding: 0.45rem 0.95rem;
+  font-size: 0.78rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--color-text-subtle);
+  background: rgba(255, 255, 255, 0.015);
+}
+
+.pill__dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--color-warm);
+  flex-shrink: 0;
+  box-shadow: 0 0 0 3px var(--color-warm-soft);
+}
+
 /* =============================================================
    BUTTONS & LINKS
    ============================================================= */
@@ -178,7 +249,8 @@ section[id],
   font-size: 0.95rem;
   font-weight: 600;
   border: 1px solid transparent;
-  transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease, transform 0.15s ease;
+  transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease,
+    transform 0.15s ease, box-shadow 0.25s ease;
   white-space: nowrap;
 }
 
@@ -193,6 +265,8 @@ section[id],
 
 .btn-primary:hover {
   background: var(--color-accent-deep);
+  box-shadow: var(--glow-accent);
+  transform: translateY(-1px);
 }
 
 .text-link {
@@ -242,6 +316,12 @@ section[id],
   background: var(--color-accent);
   transform: rotate(45deg);
   flex-shrink: 0;
+  transition: transform 0.4s var(--ease-out), box-shadow 0.4s ease;
+}
+
+.header__brand:hover .header__brand-mark {
+  transform: rotate(225deg);
+  box-shadow: 0 0 12px rgba(108, 151, 242, 0.6);
 }
 
 .header__brand-name {
@@ -319,6 +399,11 @@ section[id],
   border-radius: 6px;
   padding: 0;
   flex-shrink: 0;
+  transition: border-color 0.2s ease;
+}
+
+.header__menu-btn:hover {
+  border-color: var(--color-accent-deep);
 }
 
 .header__menu-btn span {
@@ -344,12 +429,18 @@ section[id],
 .header__mobile-nav {
   display: grid;
   grid-template-rows: 0fr;
-  transition: grid-template-rows 0.25s ease;
+  /* visibility is delayed on close (and instant on open) so the links inside
+     stop being keyboard-focusable once fully collapsed, without disturbing
+     the collapse animation itself */
+  visibility: hidden;
+  transition: grid-template-rows 0.25s ease, visibility 0s linear 0.25s;
   border-bottom: 1px solid transparent;
 }
 
 .header__mobile-nav.is-open {
   grid-template-rows: 1fr;
+  visibility: visible;
+  transition: grid-template-rows 0.25s ease, visibility 0s linear 0s;
   border-bottom-color: var(--color-border);
 }
 
@@ -429,6 +520,23 @@ section[id],
   max-width: 4rem;
   height: 1px;
   background: var(--color-border);
+  position: relative;
+  overflow: hidden;
+}
+
+/* a quiet sweep of light across the rule when the heading scrolls in */
+.section-heading__rule::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--color-accent);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.9s var(--ease-out) 0.15s;
+}
+
+[data-reveal].is-revealed .section-heading__rule::after {
+  transform: scaleX(1);
 }
 
 .section-heading__title {
@@ -448,13 +556,53 @@ section[id],
    ============================================================= */
 .hero {
   padding-block: clamp(2.5rem, 6vw, 4.5rem) clamp(1.75rem, 4vw, 3rem);
+  position: relative;
+  overflow: hidden;
+}
+
+/* soft ambient glow anchored behind the graphic — pure gradient, no filter cost */
+.hero::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  right: 10%;
+  width: min(70vw, 640px);
+  height: min(70vw, 640px);
+  background: radial-gradient(circle, rgba(108, 151, 242, 0.14), transparent 70%);
+  transform: translateY(-50%);
+  pointer-events: none;
+  z-index: 0;
 }
 
 .hero__inner {
   display: grid;
   grid-template-columns: 1fr;
-  gap: clamp(2rem, 5vw, 3rem);
+  gap: clamp(2.5rem, 6vw, 3rem);
   align-items: center;
+  position: relative;
+  z-index: 1;
+}
+
+/* one-time entrance on load — independent of the scroll-reveal system,
+   since hero content is visible immediately and shouldn't wait on scroll */
+.hero__content,
+.hero__graphic {
+  animation: hero-in 0.85s var(--ease-out) both;
+}
+
+.hero__graphic {
+  animation-delay: 0.12s;
+}
+
+@keyframes hero-in {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
 }
 
 .hero__eyebrow {
@@ -474,6 +622,18 @@ section[id],
   border-radius: 50%;
   background: var(--color-warm);
   flex-shrink: 0;
+  box-shadow: 0 0 0 3px var(--color-warm-soft);
+  animation: pill-breathe 2.6s ease-in-out infinite;
+}
+
+@keyframes pill-breathe {
+  0%,
+  100% {
+    box-shadow: 0 0 0 3px var(--color-warm-soft);
+  }
+  50% {
+    box-shadow: 0 0 0 6px transparent;
+  }
 }
 
 .hero__title {
@@ -485,19 +645,7 @@ section[id],
 
 .hero__title-accent {
   color: var(--color-accent);
-}
-
-.hero__subtitle {
-  margin-top: 1.4rem;
-  color: var(--color-text);
-  font-size: 1.05rem;
-  font-weight: 600;
-}
-
-.hero__description {
-  margin-top: 0.85rem;
-  max-width: 50ch;
-  font-size: 1.02rem;
+  position: relative;
 }
 
 .hero__actions {
@@ -505,7 +653,7 @@ section[id],
   flex-wrap: wrap;
   align-items: center;
   gap: 1.5rem;
-  margin-top: 2rem;
+  margin-top: 2.25rem;
 }
 
 .hero__secondary-link {
@@ -535,15 +683,26 @@ section[id],
   font-weight: 700;
 }
 
+/* ---- interactive hero graphic ("the clock") ---- */
 .hero__graphic {
-  display: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   position: relative;
-  justify-self: center;
+  isolation: isolate;
 }
 
-/* small reticle marks echoing a technical viewfinder */
-.hero__graphic::before,
-.hero__graphic::after {
+.hero__graphic-frame {
+  position: relative;
+  width: 100%;
+  max-width: min(260px, 78vw);
+  will-change: transform;
+}
+
+/* small reticle marks echoing a technical viewfinder, hugging the frame
+   itself so they stay put regardless of what sits below (e.g. the hint) */
+.hero__graphic-frame::before,
+.hero__graphic-frame::after {
   content: '';
   position: absolute;
   width: 16px;
@@ -551,16 +710,16 @@ section[id],
   pointer-events: none;
 }
 
-.hero__graphic::before {
-  top: -14px;
-  right: 6px;
+.hero__graphic-frame::before {
+  top: -10px;
+  right: -4px;
   border-top: 1px solid var(--color-border);
   border-right: 1px solid var(--color-border);
 }
 
-.hero__graphic::after {
-  bottom: -14px;
-  left: 6px;
+.hero__graphic-frame::after {
+  bottom: -10px;
+  left: -4px;
   border-bottom: 1px solid var(--color-border);
   border-left: 1px solid var(--color-border);
 }
@@ -568,7 +727,8 @@ section[id],
 .technical-graphic {
   width: 100%;
   height: auto;
-  max-width: min(420px, 100%);
+  display: block;
+  overflow: visible;
 }
 
 .technical-graphic__label {
@@ -615,37 +775,314 @@ section[id],
   }
 }
 
+/* connector lines: one per node (radial spokes from the hub). At rest they're
+   just structural; selecting a node highlights its own connector and quiets
+   the rest, so the diagram visibly "points to" the active story. */
+.technical-graphic__connector {
+  /* resting stroke/width come from the line's own attributes in the markup
+     (kept varied — two accent, one neutral — for the original composition);
+     this rule only needs to own the transition and the active override. */
+  transition: stroke 0.35s ease, stroke-width 0.35s ease, opacity 0.35s ease;
+}
+
+.technical-graphic__connector.is-active {
+  stroke: var(--color-accent);
+  stroke-width: 2;
+  filter: drop-shadow(0 0 4px rgba(108, 151, 242, 0.5));
+}
+
+.technical-graphic.has-active .technical-graphic__connector:not(.is-active) {
+  opacity: 0.35;
+}
+
+/* interactive nodes: generous invisible hit area for touch, visible dot stays small */
+.technical-graphic__node {
+  cursor: pointer;
+}
+
+.technical-graphic__node-hit {
+  fill: transparent;
+}
+
+.technical-graphic__node-dot {
+  transition: r 0.25s var(--ease-out), filter 0.25s ease;
+}
+
+.technical-graphic__node-label {
+  opacity: 0;
+  transform: translateY(4px);
+  transform-box: fill-box;
+  transform-origin: center;
+  transition: opacity 0.3s ease, transform 0.3s var(--ease-out);
+}
+
+.technical-graphic__node:hover .technical-graphic__node-dot,
+.technical-graphic__node:focus-visible .technical-graphic__node-dot,
+.technical-graphic__node.is-active .technical-graphic__node-dot {
+  r: 6.5;
+  filter: drop-shadow(0 0 6px currentColor);
+}
+
+.technical-graphic__node:hover .technical-graphic__node-label,
+.technical-graphic__node:focus-visible .technical-graphic__node-label,
+.technical-graphic__node.is-active .technical-graphic__node-label {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.technical-graphic__node:focus-visible .technical-graphic__node-dot {
+  outline: none;
+}
+
+/* a brief one-shot settle animation when a node becomes active, so the
+   selection reads as an event rather than a static state change */
+.technical-graphic__node.is-active .technical-graphic__node-dot {
+  animation: tg-select 0.4s var(--ease-out);
+}
+
+@keyframes tg-select {
+  0% {
+    r: 5;
+  }
+  50% {
+    r: 8;
+  }
+  100% {
+    r: 6.5;
+  }
+}
+
+/* Resting hint / selected-node story, directly below the graphic. Fixed
+   min-height keeps the layout stable as text length changes between nodes. */
+.hero__graphic-panel {
+  width: 100%;
+  max-width: 34ch;
+  margin-top: 1rem;
+  text-align: center;
+  min-height: 4.5em;
+  transition: opacity 0.15s ease;
+}
+
+/* brief crossfade while script.js swaps the title/text between nodes */
+.hero__graphic-panel.is-transitioning {
+  opacity: 0;
+}
+
+.hero__graphic-panel-title {
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-text-subtle);
+  margin-bottom: 0.35rem;
+  transition: color 0.25s ease;
+}
+
+.hero__graphic-panel-text {
+  font-size: 0.85rem;
+  color: var(--color-text-subtle);
+  line-height: 1.5;
+  transition: color 0.25s ease;
+}
+
+.hero__graphic-panel.has-selection .hero__graphic-panel-title {
+  color: var(--color-accent);
+}
+
+.hero__graphic-panel.has-selection .hero__graphic-panel-text {
+  color: var(--color-text-muted);
+}
+
 /* Two-column layout once there's enough room for the graphic beside the text without squeezing either */
+@media (min-width: 640px) {
+  .hero__graphic-frame {
+    max-width: min(300px, 60vw);
+  }
+}
+
 @media (min-width: 860px) {
   .hero__inner {
     grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
   }
 
-  .hero__graphic {
-    display: flex;
-    justify-content: center;
-  }
-}
-
-@media (max-width: 859px) {
-  .technical-graphic {
-    max-width: min(280px, 100%);
+  .hero__graphic-frame {
+    max-width: min(420px, 100%);
   }
 }
 
 /* =============================================================
    ABOUT
    ============================================================= */
+/* Photo + short intro, integrated at the top of the About copy column
+   rather than as its own full-width strip — that separate strip left a
+   large empty gap beside a short caption. Living here, it only ever has
+   to fill the copy column's width, not the whole viewport. */
+.about__intro {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.25rem;
+  text-align: center;
+  margin-bottom: clamp(1.75rem, 4vw, 2.25rem);
+  padding-bottom: clamp(1.75rem, 4vw, 2.25rem);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.about__intro-photo {
+  position: relative;
+  margin: 0;
+  flex-shrink: 0;
+  width: 108px;
+  height: 108px;
+}
+
+.about__intro-photo-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 18%; /* biases the crop toward the face on a portrait photo */
+  border-radius: 12px;
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+}
+
+.about__intro-photo-img--placeholder {
+  object-fit: contain;
+  padding: 4px;
+}
+
+/* corner brackets, echoing the hero graphic's reticle language for cohesion —
+   both in the primary accent, matching the site's single-accent system */
+.about__intro-photo-frame {
+  position: absolute;
+  inset: -7px;
+  pointer-events: none;
+}
+
+.about__intro-photo-frame::before,
+.about__intro-photo-frame::after {
+  content: '';
+  position: absolute;
+  width: 16px;
+  height: 16px;
+}
+
+.about__intro-photo-frame::before {
+  top: 0;
+  left: 0;
+  border-top: 1.5px solid var(--color-accent);
+  border-left: 1.5px solid var(--color-accent);
+}
+
+.about__intro-photo-frame::after {
+  bottom: 0;
+  right: 0;
+  border-bottom: 1.5px solid var(--color-accent-deep);
+  border-right: 1.5px solid var(--color-accent-deep);
+}
+
+.about__intro-text {
+  max-width: 44ch;
+}
+
+.about__intro-name {
+  color: var(--color-text);
+  font-size: 1.2rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  margin-bottom: 0.3rem;
+}
+
+.about__intro-eyebrow {
+  color: var(--color-accent);
+  font-size: 0.75rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  margin-bottom: 0.5rem;
+}
+
+.about__intro-quote {
+  color: var(--color-text);
+  font-size: 1.05rem;
+  line-height: 1.5;
+}
+
+/* Row layout once the copy column (not the full viewport) has room for it */
+@media (min-width: 480px) {
+  .about__intro {
+    flex-direction: row;
+    align-items: center;
+    text-align: left;
+  }
+}
+
 .about__grid {
   display: grid;
   grid-template-columns: 1fr;
   gap: 2.5rem;
 }
 
+.about__copy {
+  position: relative;
+}
+
 .about__copy p {
   margin-bottom: 1.1rem;
   max-width: 60ch;
   font-size: 1.02rem;
+}
+
+/* Orange accent rail — the visual signature that sets About apart from the
+   rest of the page. A static gradient line plus a small glowing dot that
+   slowly travels its length, so it reads as alive rather than a static
+   divider. Held off until the intro/copy is already left-aligned (see the
+   about__intro row breakpoint below) so it doesn't fight the centered
+   mobile layout. */
+@media (min-width: 480px) {
+  .about__copy {
+    padding-left: 1.75rem;
+  }
+
+  .about__copy::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: linear-gradient(
+      180deg,
+      transparent,
+      var(--color-warm) 12%,
+      var(--color-warm) 88%,
+      transparent
+    );
+  }
+
+  .about__copy::after {
+    content: '';
+    position: absolute;
+    left: -3px;
+    top: 0;
+    width: 8px;
+    height: 64px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(230, 164, 94, 0.85), transparent 72%);
+    filter: blur(1px);
+    pointer-events: none;
+    animation: about-line-travel 7s ease-in-out infinite;
+  }
+}
+
+@keyframes about-line-travel {
+  0%,
+  100% {
+    top: 2%;
+    opacity: 0.55;
+  }
+  50% {
+    top: calc(98% - 64px);
+    opacity: 1;
+  }
 }
 
 .about__copy p:last-child {
@@ -656,11 +1093,12 @@ section[id],
   color: var(--color-text);
 }
 
-.about__timeline {
-  background: var(--color-surface);
+.about__timeline-card {
+  background: linear-gradient(160deg, var(--color-surface-raised), var(--color-surface));
   border: 1px solid var(--color-border);
   border-radius: 8px;
   padding: clamp(1.5rem, 3vw, 2rem) clamp(1.25rem, 3vw, 1.75rem);
+  box-shadow: var(--shadow-sm);
 }
 
 .about__timeline-item {
@@ -682,6 +1120,11 @@ section[id],
   border: 1.5px solid var(--color-accent);
   background: var(--color-bg);
   flex-shrink: 0;
+  transition: box-shadow 0.3s ease;
+}
+
+[data-reveal].is-revealed .about__timeline-dot {
+  box-shadow: 0 0 0 4px var(--color-accent-soft);
 }
 
 .about__timeline-line {
@@ -724,28 +1167,134 @@ section[id],
 }
 
 /* =============================================================
-   WORK — real projects, presented as clean cards
+   WORK — real projects, presented as clean cards with previews
    ============================================================= */
 .work__grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(min(260px, 100%), 1fr));
-  gap: clamp(1.25rem, 3vw, 1.75rem);
+  grid-template-columns: repeat(auto-fit, minmax(min(280px, 100%), 1fr));
+  gap: clamp(1.5rem, 3vw, 2rem);
 }
 
 .work-card {
   display: flex;
   flex-direction: column;
-  gap: 0.9rem;
-  padding: clamp(1.5rem, 3vw, 1.75rem);
   border: 1px solid var(--color-border);
-  border-radius: 8px;
+  border-radius: 10px;
   background: var(--color-surface);
-  transition: border-color 0.2s ease, transform 0.2s ease;
+  overflow: hidden;
+  position: relative;
+  transition: border-color 0.3s ease, transform 0.3s var(--ease-out), box-shadow 0.3s ease;
 }
 
-.work-card:hover {
+.work-card:hover,
+.work-card:focus-within {
   border-color: var(--color-accent-deep);
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-md);
+}
+
+.work-card__preview {
+  position: relative;
+  display: block;
+  border-bottom: 1px solid var(--color-border);
+  background: var(--color-bg);
+}
+
+.work-card__browser-bar {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.6rem 0.85rem;
+  background: var(--color-surface-raised);
+  border-bottom: 1px solid var(--color-border-soft);
+}
+
+.work-card__dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--color-border);
+}
+
+.work-card__browser-url {
+  margin-left: 0.5rem;
+  font-size: 0.7rem;
+  color: var(--color-text-subtle);
+  letter-spacing: 0.02em;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.work-card__preview-frame {
+  display: block;
+  position: relative;
+  aspect-ratio: 13 / 6; /* matches the current screenshots' native ~2.17:1 crop */
+  overflow: hidden;
+}
+
+.work-card__preview-img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top;
+  transition: transform 0.5s var(--ease-out);
+}
+
+.work-card:hover .work-card__preview-img,
+.work-card:focus-within .work-card__preview-img {
+  transform: scale(1.05);
+}
+
+/* Always at least partly visible (not hover-only) so the card reads as
+   clickable on touch devices with no hover at all — hover/focus just adds
+   emphasis on top of that baseline. */
+.work-card__preview-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: flex-end;
+  justify-content: flex-start;
+  padding: 1rem;
+  background: linear-gradient(180deg, transparent 60%, rgba(10, 13, 19, 0.8));
+  opacity: 0.85;
+  transition: opacity 0.3s ease;
+}
+
+.work-card:hover .work-card__preview-overlay,
+.work-card:focus-within .work-card__preview-overlay {
+  opacity: 1;
+}
+
+.work-card__preview-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.78rem;
+  letter-spacing: 0.03em;
+  color: var(--color-text);
+  border: 1px solid var(--color-border);
+  background: rgba(10, 13, 19, 0.6);
+  border-radius: 999px;
+  padding: 0.4rem 0.85rem;
+  transition: transform 0.3s var(--ease-out), border-color 0.3s ease;
+}
+
+.work-card:hover .work-card__preview-cta,
+.work-card:focus-within .work-card__preview-cta {
   transform: translateY(-2px);
+  border-color: var(--color-accent-deep);
+}
+
+.work-card__body {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+  padding: clamp(1.5rem, 3vw, 1.75rem);
+  flex: 1 1 auto;
 }
 
 .work-card__top {
@@ -758,7 +1307,28 @@ section[id],
 }
 
 .work-card__index {
-  color: var(--color-text-subtle);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--color-text);
+  font-size: 0.95rem;
+  font-weight: 700;
+}
+
+/* a tick mark that grows on hover — a quieter, collision-free stand-in
+   for a big background numeral, giving the index more visual weight */
+.work-card__index::before {
+  content: '';
+  width: 14px;
+  height: 1px;
+  background: var(--color-border);
+  transition: width 0.3s var(--ease-out), background 0.3s ease;
+}
+
+.work-card:hover .work-card__index::before,
+.work-card:focus-within .work-card__index::before {
+  width: 26px;
+  background: var(--color-accent);
 }
 
 .work-card__type {
@@ -810,41 +1380,46 @@ section[id],
   border: 1px solid var(--color-border);
   border-radius: 4px;
   padding: 0.25rem 0.55rem;
+  transition: border-color 0.2s ease, color 0.2s ease;
 }
 
-.work-card__link {
-  align-self: flex-start;
-  margin-top: 0.25rem;
-  font-size: 0.9rem;
+.work-card:hover .work-card__tag {
+  border-color: var(--color-border-soft);
 }
 
 /* =============================================================
-   SERVICES
+   SERVICES — four independent, equally-weighted offerings. Deliberately
+   NOT a process/timeline: no connecting line between cards, no implied
+   order. Each card stands on its own, styled close to the Work cards'
+   bordered-surface language for consistency, differentiated mainly by
+   the circular icon badge and lack of an image.
    ============================================================= */
 .services__grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(min(240px, 100%), 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(250px, 100%), 1fr));
   gap: clamp(1.25rem, 3vw, 1.5rem);
 }
 
 .service-card {
-  padding: clamp(1.5rem, 3vw, 1.75rem);
   border: 1px solid var(--color-border);
   border-radius: 10px;
+  padding: clamp(1.5rem, 3vw, 1.75rem);
   background: var(--color-surface);
-  transition: border-color 0.2s ease, transform 0.2s ease;
+  transition: border-color 0.25s ease, transform 0.25s var(--ease-out), box-shadow 0.25s ease;
 }
 
-.service-card:hover {
+.service-card:hover,
+.service-card:focus-within {
   border-color: var(--color-accent-deep);
-  transform: translateY(-2px);
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-md);
 }
 
 .service-card__top {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   justify-content: space-between;
-  margin-bottom: 1.25rem;
+  margin-bottom: 1.1rem;
 }
 
 .service-card__icon {
@@ -854,18 +1429,22 @@ section[id],
   width: 44px;
   height: 44px;
   border: 1px solid var(--color-border);
-  border-radius: 8px;
-  background: rgba(108, 151, 242, 0.08);
-  transition: border-color 0.2s ease;
+  border-radius: 50%;
+  background: var(--color-surface-raised);
+  flex-shrink: 0;
+  transition: border-color 0.25s ease, transform 0.35s var(--ease-out), background 0.25s ease;
 }
 
-.service-card:hover .service-card__icon {
+.service-card:hover .service-card__icon,
+.service-card:focus-within .service-card__icon {
   border-color: var(--color-accent);
+  background: var(--color-accent-soft);
+  transform: rotate(-8deg);
 }
 
 .service-card__index {
   color: var(--color-text-subtle);
-  font-size: 0.75rem;
+  font-size: 0.72rem;
   letter-spacing: 0.06em;
 }
 
@@ -894,12 +1473,34 @@ section[id],
   gap: 2.5rem;
 }
 
+/* Same elevated-card treatment as the About timeline and Contact panel, plus
+   the orange left border this card had before — the section's own identity,
+   not a color wash over the whole card. */
 .experience__current {
+  position: relative;
   border: 1px solid var(--color-border);
   border-left: 2px solid var(--color-warm);
   border-radius: 6px;
   padding: clamp(1.5rem, 3vw, 1.75rem);
-  background: var(--color-surface);
+  background: linear-gradient(160deg, var(--color-surface-raised), var(--color-surface));
+  box-shadow: var(--shadow-sm);
+  transition: transform 0.3s var(--ease-out), box-shadow 0.3s ease, border-color 0.3s ease;
+}
+
+/* subtle lift + a glow restricted to the orange rail itself, not the whole card */
+.experience__current:hover,
+.experience__current:focus-within {
+  transform: translateY(-4px);
+  border-left-color: #f0b876;
+  box-shadow: var(--shadow-md), -6px 0 22px -10px rgba(230, 164, 94, 0.5);
+}
+
+@media (hover: none) {
+  .experience__current:active {
+    transform: translateY(-2px);
+    border-left-color: #f0b876;
+    box-shadow: var(--shadow-sm), -4px 0 18px -10px rgba(230, 164, 94, 0.45);
+  }
 }
 
 .experience__current-label {
@@ -912,11 +1513,13 @@ section[id],
 }
 
 .experience__current p {
+  position: relative;
   font-size: 0.98rem;
   margin-bottom: 1.75rem;
 }
 
 .experience__skills {
+  position: relative;
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
@@ -942,12 +1545,13 @@ section[id],
   padding: 0.5rem 0.9rem;
   font-size: 0.9rem;
   color: var(--color-text);
-  transition: border-color 0.2s ease, color 0.2s ease;
+  transition: border-color 0.2s ease, color 0.2s ease, background 0.2s ease;
 }
 
 .skill-group__tag:hover {
   border-color: var(--color-accent);
   color: var(--color-accent);
+  background: var(--color-accent-soft);
 }
 
 .experience__principles {
@@ -955,12 +1559,36 @@ section[id],
   flex-direction: column;
 }
 
+/* Open-layout text on the right: no card, but given hierarchy through a
+   left accent rule that grows in and a mono index instead of a decorative
+   arrow, so it still reads as intentional rather than plain paragraphs. */
 .experience__principle {
+  position: relative;
   display: grid;
-  grid-template-columns: 24px 1fr;
+  grid-template-columns: 34px 1fr;
   gap: 1rem;
   padding-block: 1.25rem;
+  padding-left: 1rem;
   border-bottom: 1px solid var(--color-border);
+}
+
+.experience__principle::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 1.25rem;
+  bottom: 1.25rem;
+  width: 2px;
+  background: var(--color-border);
+  transform: scaleY(0);
+  transform-origin: top;
+  transition: transform 0.5s var(--ease-out), background 0.3s ease;
+}
+
+.experience__principle:hover::before,
+.experience__principle:focus-within::before {
+  transform: scaleY(1);
+  background: var(--color-accent);
 }
 
 .experience__principle:first-child {
@@ -972,9 +1600,17 @@ section[id],
   padding-bottom: 0;
 }
 
-.experience__principle-arrow {
+.experience__principle-index {
+  color: var(--color-text-subtle);
+  font-size: 0.85rem;
+  font-weight: 600;
+  padding-top: 0.15rem;
+  transition: color 0.3s ease;
+}
+
+.experience__principle:hover .experience__principle-index,
+.experience__principle:focus-within .experience__principle-index {
   color: var(--color-accent);
-  font-size: 1.1rem;
 }
 
 .experience__principle-title {
@@ -997,39 +1633,62 @@ section[id],
 /* =============================================================
    CONTACT
    ============================================================= */
-.contact__panel {
-  background: var(--color-surface);
-  border: 1px solid var(--color-border);
-  border-radius: 10px;
-  padding: clamp(2rem, 6vw, 3.5rem);
-  text-align: center;
+.contact {
+  position: relative;
+  overflow: hidden;
+}
+
+.contact__panel-wrap {
+  position: relative;
   max-width: 700px;
   margin-inline: auto;
 }
 
-.contact__badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-  color: var(--color-text-subtle);
-  font-size: 0.78rem;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
+/* The glow lives inside the panel and is clipped to it: the panel
+   establishes its own stacking context (z-index: 0) and hides overflow,
+   so the glow (negative z-index, oversized via inset) can drift without
+   ever showing a hard edge or spilling past the card's rounded corners. */
+.contact__glow {
+  position: absolute;
+  inset: -25%;
+  z-index: -1;
+  background: radial-gradient(circle at 30% 30%, rgba(108, 151, 242, 0.4), transparent 65%);
+  pointer-events: none;
+  animation: contact-glow-drift 10s ease-in-out infinite;
+}
+
+@keyframes contact-glow-drift {
+  0%,
+  100% {
+    transform: translate(-8%, -6%) scale(1);
+    opacity: 0.55;
+  }
+  50% {
+    transform: translate(8%, 6%) scale(1.2);
+    opacity: 0.9;
+  }
+}
+
+/* Same restrained elevated-card treatment used by the About timeline and
+   Experience's current-work card — one consistent "lift" across the site. */
+.contact__panel {
+  position: relative;
+  z-index: 0;
+  overflow: hidden;
+  background: linear-gradient(165deg, var(--color-surface-raised), var(--color-surface));
   border: 1px solid var(--color-border);
-  border-radius: 999px;
-  padding: 0.4rem 0.9rem;
+  border-radius: 10px;
+  padding: clamp(2rem, 6vw, 3.5rem);
+  text-align: center;
+  box-shadow: var(--shadow-sm);
+}
+
+.contact__badge {
   margin-bottom: 1.5rem;
 }
 
-.contact__badge-dot {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: var(--color-warm);
-  flex-shrink: 0;
-}
-
 .contact__title {
+  position: relative;
   font-size: clamp(1.6rem, 3.6vw, 2.4rem);
   letter-spacing: -0.01em;
   max-width: 20ch;
@@ -1037,15 +1696,17 @@ section[id],
 }
 
 .contact__description {
+  position: relative;
   margin: 1.25rem auto 0;
   max-width: 50ch;
   font-size: 1.02rem;
 }
 
 .contact__links {
+  position: relative;
   display: flex;
   flex-direction: column;
-  gap: 1.1rem;
+  gap: 0.9rem;
   margin-top: 2.25rem;
   padding-top: 1.75rem;
   border-top: 1px solid var(--color-border);
@@ -1053,20 +1714,74 @@ section[id],
 
 .contact__links li {
   display: flex;
-  flex-direction: column;
+  justify-content: center;
+}
+
+.contact__link {
+  display: inline-flex;
   align-items: center;
-  gap: 0.15rem;
+  gap: 0.65rem;
+  padding: 0.7rem 1.15rem;
+  border: 1px solid var(--color-border);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.015);
+  color: var(--color-text);
+  font-size: 0.95rem;
+  transition: border-color 0.25s ease, color 0.25s ease, transform 0.2s ease,
+    box-shadow 0.25s ease, background 0.25s ease;
 }
 
-.contact__link-label {
-  color: var(--color-text-subtle);
-  font-size: 0.7rem;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
+.contact__link:hover,
+.contact__link:focus-visible {
+  color: var(--color-accent);
+  border-color: var(--color-accent-deep);
+  background: var(--color-accent-soft);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-sm);
 }
 
-.contact__links .text-link {
-  font-size: 1rem;
+.contact__link-icon {
+  display: inline-flex;
+  flex-shrink: 0;
+  color: var(--color-accent);
+}
+
+.contact__link-icon svg {
+  width: 18px;
+  height: 18px;
+  transition: transform 0.25s var(--ease-out);
+}
+
+/* Each icon gets its own small, specific motion rather than one shared
+   effect repeated three times — subtle enough to read as polish, not
+   as three unrelated gimmicks. */
+.contact__link:hover .contact__link-icon--email svg,
+.contact__link:focus-visible .contact__link-icon--email svg {
+  transform: translateY(-2px);
+}
+
+.contact__link:hover .contact__link-icon--github svg,
+.contact__link:focus-visible .contact__link-icon--github svg {
+  transform: rotate(-12deg) translateY(-1px);
+}
+
+.contact__link:hover .contact__link-icon--linkedin svg,
+.contact__link:focus-visible .contact__link-icon--linkedin svg {
+  transform: scale(1.1);
+}
+
+/* Touch has no hover — :active gives the same feedback on tap, and the
+   existing :focus-visible rules already cover keyboard activation. */
+@media (hover: none) {
+  .contact__link:active {
+    color: var(--color-accent);
+    border-color: var(--color-accent-deep);
+    background: var(--color-accent-soft);
+  }
+}
+
+.contact__link-text {
+  word-break: break-word;
 }
 
 @media (min-width: 560px) {
@@ -1074,7 +1789,7 @@ section[id],
     flex-direction: row;
     justify-content: center;
     flex-wrap: wrap;
-    gap: clamp(1.5rem, 4vw, 2.5rem);
+    gap: 1rem;
   }
 }
 

@@ -57,7 +57,9 @@ Every section of the page (Hero, About, Work, Services, Experience, Contact) liv
 
 ## Customization
 
-**Projects** — find the `<!-- ============ WORK ============ -->` section in `index.html`. Each project is an `<article class="work-card">` block — copy one, edit the name/description/role/tags, and add a link if the project has a live URL or repo.
+**Your photo** — find the `<!-- ============ INTRO STRIP ============ -->` section, just above About. Replace `assets/images/Solstice Summit Headshot.JPG` with a new file and update the `<img src>` to match (or overwrite the same filename). If the file is ever missing, it automatically falls back to `assets/images/profile-placeholder.svg` instead of showing a broken image.
+
+**Projects** — find the `<!-- ============ WORK ============ -->` section in `index.html`. Each project is an `<article class="work-card">` block — copy one, edit the name/description/role/tags, and add a link if the project has a live URL or repo. Each card's preview image lives in `assets/images/work-*.png`; swap the file (or update its `<img src>`) whenever a project gets a fresh screenshot — a ~2.15:1 crop matches the existing frame best.
 
 **Services** — find the `<!-- ============ SERVICES ============ -->` section. Each service is an `<article class="service-card">` block.
 
