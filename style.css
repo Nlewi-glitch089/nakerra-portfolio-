@@ -162,6 +162,17 @@ section[id],
   }
 }
 
+/* Infinite decorative loops pause while their container is scrolled out of
+   view (script.js toggles .is-offscreen on [data-pause-offscreen]). They
+   resume exactly where they stopped, so nothing visibly changes. */
+.is-offscreen .technical-graphic__hand,
+.is-offscreen .technical-graphic__center,
+.is-offscreen .hero__eyebrow-dot,
+.is-offscreen .contact__glow,
+.about__copy.is-offscreen::after {
+  animation-play-state: paused;
+}
+
 /* =============================================================
    LAYOUT HELPERS
    ============================================================= */
@@ -464,6 +475,11 @@ section[id],
 .header__mobile-nav a:hover {
   color: var(--color-text);
   padding-left: 0.5rem;
+}
+
+/* current section (set by the scrollspy in script.js) — same accent as the desktop nav */
+.header__mobile-nav a.is-active {
+  color: var(--color-accent);
 }
 
 .header__mobile-nav li:last-child a {
@@ -1058,6 +1074,13 @@ section[id],
     );
   }
 
+  /* Deliberately animates `top`, not transform. A transform animation here
+     was tested and gets promoted to its own compositor layer, which makes
+     Chrome promote everything painted after it too — switching the text in
+     every later section from subpixel (ClearType) to grayscale anti-aliasing
+     on Windows. `top` on this small out-of-flow element is cheap by
+     comparison, and the loop is paused while off-screen (see
+     data-pause-offscreen in script.js). */
   .about__copy::after {
     content: '';
     position: absolute;

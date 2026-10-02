@@ -8,6 +8,26 @@
     content="Nakerra Lewis — Software Engineer. Clean, responsive websites for small businesses and independent brands."
   />
   <title>Nakerra Lewis — Software Engineer</title>
+
+  <!-- Social sharing preview (Open Graph, also read by LinkedIn, Slack,
+       iMessage, etc.). og:url and og:image are intentionally left out
+       until the live URL and a 1200×630 preview image exist — both must be
+       absolute URLs to work. -->
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="Nakerra Lewis" />
+  <meta property="og:title" content="Nakerra Lewis — Software Engineer" />
+  <meta
+    property="og:description"
+    content="Clean, responsive websites for small businesses and independent brands."
+  />
+  <meta property="og:locale" content="en_US" />
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Nakerra Lewis — Software Engineer" />
+  <meta
+    name="twitter:description"
+    content="Clean, responsive websites for small businesses and independent brands."
+  />
+
   <link rel="icon" type="image/svg+xml" href="assets/images/favicon.svg" />
   <link rel="stylesheet" href="style.css" />
   <!-- Removes `no-js` before first paint so scroll-reveal animations can rely on
@@ -28,7 +48,7 @@
 
       <nav class="header__nav" aria-label="Primary">
         <ul>
-          <li><a href="#home" class="nav-link is-active">Home</a></li>
+          <li><a href="#home" class="nav-link is-active" aria-current="location">Home</a></li>
           <li><a href="#about" class="nav-link">About</a></li>
           <li><a href="#work" class="nav-link">Work</a></li>
           <li><a href="#services" class="nav-link">Services</a></li>
@@ -53,7 +73,7 @@
 
     <div class="header__mobile-nav" id="mobile-nav">
       <ul>
-        <li><a href="#home" class="mobile-nav-link">Home</a></li>
+        <li><a href="#home" class="mobile-nav-link is-active" aria-current="location">Home</a></li>
         <li><a href="#about" class="mobile-nav-link">About</a></li>
         <li><a href="#work" class="mobile-nav-link">Work</a></li>
         <li><a href="#services" class="mobile-nav-link">Services</a></li>
@@ -65,7 +85,9 @@
 
   <main id="main">
     <!-- ============ HERO ============ -->
-    <section id="home" class="hero">
+    <!-- data-pause-offscreen: script.js pauses this container's infinite
+         decorative animations while it's scrolled out of view -->
+    <section id="home" class="hero" data-pause-offscreen>
       <div class="container hero__inner">
         <div class="hero__content">
           <p class="hero__eyebrow mono">
@@ -177,7 +199,7 @@
     <!-- ============ ABOUT ============ -->
     <section id="about" class="section about">
       <div class="container about__grid">
-        <div class="about__copy">
+        <div class="about__copy" data-pause-offscreen>
           <!-- Photo lives here, alongside the intro, rather than as its own
                full-width strip — that left a lot of dead space to the right
                of a short caption. To swap the photo: replace the file in
@@ -188,6 +210,8 @@
               <img
                 src="assets/images/Solstice Summit Headshot.JPG"
                 alt="Portrait of Nakerra Lewis"
+                width="640"
+                height="960"
                 loading="lazy"
                 class="about__intro-photo-img"
                 id="profile-photo"
@@ -310,7 +334,8 @@
 
         <div class="work__grid">
           <!-- Preview images live in assets/images/work-*.png — replace a file
-               (or update its <img src>) whenever a project gets a fresh screenshot. -->
+               (or update its <img src>) whenever a project gets a fresh screenshot,
+               and update that <img>'s width/height to the new file's pixel size. -->
           <article class="work-card" data-index="01" data-reveal data-reveal-group="work">
             <a
               class="work-card__preview"
@@ -329,6 +354,8 @@
                 <img
                   src="assets/images/work-jwli-preview.png"
                   alt="Preview of the Japanese Women's Leadership Initiative website"
+                  width="1293"
+                  height="600"
                   loading="lazy"
                   class="work-card__preview-img"
                 />
@@ -379,6 +406,8 @@
                 <img
                   src="assets/images/work-lobster-preview.png"
                   alt="Preview of the Slack Tide Lobster Shack website"
+                  width="1298"
+                  height="598"
                   loading="lazy"
                   class="work-card__preview-img"
                 />
@@ -429,6 +458,8 @@
                 <img
                   src="assets/images/work-waterice-preview.png"
                   alt="Preview of the Two Street Water Ice website"
+                  width="1299"
+                  height="597"
                   loading="lazy"
                   class="work-card__preview-img"
                 />
@@ -587,7 +618,7 @@
 
             <div class="experience__skills">
               <div class="skill-group">
-                <h4 class="skill-group__title mono">Languages &amp; Markup</h4>
+                <h3 class="skill-group__title mono">Languages &amp; Markup</h3>
                 <ul class="skill-group__list">
                   <li class="skill-group__tag">HTML</li>
                   <li class="skill-group__tag">CSS</li>
@@ -595,14 +626,14 @@
                 </ul>
               </div>
               <div class="skill-group">
-                <h4 class="skill-group__title mono">Practice / Design</h4>
+                <h3 class="skill-group__title mono">Practice / Design</h3>
                 <ul class="skill-group__list">
                   <li class="skill-group__tag">Responsive Web Design</li>
                   <li class="skill-group__tag">UX / UI Design</li>
                 </ul>
               </div>
               <div class="skill-group">
-                <h4 class="skill-group__title mono">Tools &amp; Workflow</h4>
+                <h3 class="skill-group__title mono">Tools &amp; Workflow</h3>
                 <ul class="skill-group__list">
                   <li class="skill-group__tag">Git</li>
                   <li class="skill-group__tag">GitHub</li>
@@ -659,7 +690,7 @@
     </section>
 
     <!-- ============ CONTACT ============ -->
-    <section id="contact" class="section contact">
+    <section id="contact" class="section contact" data-pause-offscreen>
       <div class="container">
         <div class="section-heading" data-reveal>
           <p class="section-heading__eyebrow mono">

@@ -14,13 +14,16 @@ It's built to be a long-term site I keep using and updating — not a one-off as
 
 ## Features
 
-- Single-page layout with smooth-scrolling navigation between sections
+- Single-page layout with smooth-scrolling navigation between sections, with the current section highlighted in both the desktop nav and the mobile menu
+- Interactive hero graphic — keyboard- and touch-accessible nodes that reveal short stories in a panel below it
+- Subtle scroll-reveal animations, paused decorative loops when off-screen, and full `prefers-reduced-motion` support
 - Fully responsive design (mobile, tablet, desktop)
 - Selected work section showcasing real projects
 - Services section describing the type of freelance/client work I take on
 - Experience & skills section with my working principles and technical skills
 - Contact section with real, working links (email, GitHub, LinkedIn)
-- Accessible markup: semantic HTML, visible focus states, reduced-motion support
+- Accessible markup: semantic HTML and heading structure, visible focus states, `aria-current` / `aria-expanded` state, Escape-to-close mobile menu
+- Open Graph / social sharing metadata
 
 ## Tech Stack
 
@@ -28,7 +31,7 @@ This is a plain, foundational front-end project — no frameworks, no build tool
 
 - **HTML5** — semantic markup, all content lives directly in `index.html`
 - **CSS3** — one stylesheet (`style.css`), organized by section, using CSS custom properties for the color system
-- **Vanilla JavaScript** — one script (`script.js`) for the mobile menu, scroll-based nav highlighting, and the footer year
+- **Vanilla JavaScript** — one script (`script.js`), loaded as a plain classic script (not an ES module, so the site still works when `index.html` is opened directly from disk). Each feature has its own `init…()` function: footer year, mobile menu, scrollspy nav highlighting, scroll-reveal animations, the interactive hero graphic (and its cursor tilt), pausing off-screen animations, and the profile-photo fallback. Each one checks for the elements it needs and quietly skips itself if they're missing, and an unexpected error in one feature is logged to the console without stopping the others.
 
 ## Getting Started
 
@@ -47,7 +50,7 @@ There is no `npm install`, `npm run dev`, or build step of any kind — edit the
 ```
 index.html            # All page content and structure (single page)
 style.css              # All styles: design tokens, layout, and every section
-script.js               # Mobile menu, scroll-spy nav highlighting, footer year
+script.js               # All interactivity — one init function per feature (see Tech Stack)
 README.md
 assets/
   images/               # Favicon and any other images used on the site
@@ -57,9 +60,11 @@ Every section of the page (Hero, About, Work, Services, Experience, Contact) liv
 
 ## Customization
 
-**Your photo** — find the `<!-- ============ INTRO STRIP ============ -->` section, just above About. Replace `assets/images/Solstice Summit Headshot.JPG` with a new file and update the `<img src>` to match (or overwrite the same filename). If the file is ever missing, it automatically falls back to `assets/images/profile-placeholder.svg` instead of showing a broken image.
+**Your photo** — the photo sits at the top of the About section (the `about__intro` block inside `<!-- ============ ABOUT ============ -->`). Replace `assets/images/Solstice Summit Headshot.JPG` with a new file and update the `<img src>` to match (or overwrite the same filename), and set the `<img>`'s `width`/`height` to the new file's pixel dimensions. If the file is ever missing, it automatically falls back to `assets/images/profile-placeholder.svg` instead of showing a broken image.
 
-**Projects** — find the `<!-- ============ WORK ============ -->` section in `index.html`. Each project is an `<article class="work-card">` block — copy one, edit the name/description/role/tags, and add a link if the project has a live URL or repo. Each card's preview image lives in `assets/images/work-*.png`; swap the file (or update its `<img src>`) whenever a project gets a fresh screenshot — a ~2.15:1 crop matches the existing frame best.
+**Hero graphic** — each node in the hero SVG (`<!-- ============ HERO ============ -->`) carries its own `data-title` / `data-text`; edit those attributes to change what a node reveals — no JavaScript changes needed.
+
+**Projects** — find the `<!-- ============ WORK ============ -->` section in `index.html`. Each project is an `<article class="work-card">` block — copy one, edit the name/description/role/tags, and add a link if the project has a live URL or repo. Each card's preview image lives in `assets/images/work-*.png`; swap the file (or update its `<img src>`) whenever a project gets a fresh screenshot — a ~2.15:1 crop matches the existing frame best — and update that `<img>`'s `width`/`height` to the new screenshot's pixel size.
 
 **Services** — find the `<!-- ============ SERVICES ============ -->` section. Each service is an `<article class="service-card">` block.
 
@@ -69,7 +74,9 @@ Every section of the page (Hero, About, Work, Services, Experience, Contact) liv
 
 **Contact links** — find the `<!-- ============ CONTACT ============ -->` section and update the email `mailto:` link and the GitHub/LinkedIn URLs.
 
-**Navigation** — the nav links live in the `<header>` at the top of `index.html`. Each link's `href="#id"` must match the `id` on the section it should scroll to.
+**Navigation** — the nav links live in the `<header>` at the top of `index.html`, once for the desktop nav and once for the mobile menu — keep both lists in sync. Each link's `href="#id"` must match the `id` on the section it should scroll to. The 900px breakpoint where the mobile menu switches to the inline nav is defined in both `style.css` and `script.js` (`desktopNavQuery`); change them together.
+
+**Sharing preview** — the Open Graph / Twitter `<meta>` tags at the top of `index.html` control how the link looks when shared. Once the live URL and a 1200×630 preview image exist, add `og:url` and `og:image` (both absolute URLs).
 
 **Colors** — all colors are defined once as CSS custom properties at the top of `style.css` (see Design System below). Change a value there and it updates everywhere it's used.
 
