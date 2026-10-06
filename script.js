@@ -720,8 +720,154 @@ function initHeroTilt(heroGraphic, heroFrame) {
 }
 
 // ===================================================================
-// Pause off-screen decorative loops — the hero clock's sweep/pulse, the
-// About rail's traveling glow, and the Contact glow run forever, so each
+// Work — the "specimen bench"
+//
+// index.html ships the Work section as plain content: an index of links
+// that jump to three full project write-ups, each with its inside already
+// showing. That's the no-JavaScript version. This upgrades it:
+//  - The index becomes an ARIA tablist showing one project at a time.
+//    Arrow keys, Home and End move between projects, like a native tab
+//    strip; Tab moves on into the project itself.
+//  - Each project's inside (what's in it, my part, notes) folds behind a
+//    "Look inside" toggle. Its open/closed state is shared by all the
+//    projects, so someone comparing them doesn't have to reopen each one.
+//  - A "Next" button at the foot of each project, so on a phone you can
+//    go through them without scrolling back up to the index.
+// Links to a project's id (#project-…) still work: they select it.
+// ===================================================================
+function initWorkBench() {
+  const bench = document.querySelector('[data-work-bench]');
+  if (!bench) return;
+
+  const list = bench.querySelector('[data-bench-index]');
+  const projects = Array.from(bench.querySelectorAll('[data-bench-tab]')).map((tab) => {
+    const panel = document.getElementById(tab.hash.slice(1));
+    return {
+      tab,
+      panel,
+      toggle: panel?.querySelector('[data-bench-toggle]'),
+      inside: panel?.querySelector('[data-bench-inside]'),
+      code: tab.querySelector('.bench__index-code')?.textContent.trim() || '',
+      name: tab.querySelector('.bench__index-name')?.textContent.trim() || '',
+    };
+  });
+  if (!list || !projects.length || projects.some((p) => !p.panel || !p.toggle || !p.inside)) return;
+
+  const state = {
+    index: 0,
+    insideOpen: false, // closed by default: the surface is the first read
+  };
+
+  // ---- tablist semantics on top of the plain list ----
+  list.setAttribute('role', 'tablist');
+  list.setAttribute('aria-orientation', 'vertical');
+  Array.from(list.children).forEach((li) => li.setAttribute('role', 'presentation'));
+
+  projects.forEach((project) => {
+    project.tab.setAttribute('role', 'tab');
+    project.tab.id = `${project.panel.id}-tab`;
+    project.tab.setAttribute('aria-controls', project.panel.id);
+    // the panel keeps its own aria-labelledby (its <h3>), a shorter name
+    // than the tab's, which also includes the code, type and status
+    project.panel.setAttribute('role', 'tabpanel');
+    project.toggle.hidden = false;
+  });
+
+  function render() {
+    projects.forEach((project, i) => {
+      const isSelected = i === state.index;
+      project.tab.setAttribute('aria-selected', String(isSelected));
+      project.tab.tabIndex = isSelected ? 0 : -1;
+      project.panel.hidden = !isSelected;
+      project.toggle.setAttribute('aria-expanded', String(state.insideOpen));
+      project.inside.hidden = !state.insideOpen;
+    });
+  }
+
+  function select(index) {
+    state.index = (index + projects.length) % projects.length;
+    render();
+  }
+
+  // ---- events ----
+  projects.forEach((project, i) => {
+    project.tab.addEventListener('click', (event) => {
+      event.preventDefault(); // select in place, don't jump to the anchor
+      select(i);
+    });
+
+    project.toggle.addEventListener('click', () => {
+      state.insideOpen = !state.insideOpen;
+      render();
+    });
+
+    // "Next: AP-02 Philly ArtPulse →" at the foot of each project
+    const next = projects[(i + 1) % projects.length];
+    const nextButton = document.createElement('button');
+    nextButton.type = 'button';
+    nextButton.className = 'specimen__next';
+    const parts = [
+      ['specimen__next-label mono', 'Next'],
+      ['specimen__next-code mono', next.code],
+      ['specimen__next-name', next.name],
+      ['specimen__next-arrow', '→'],
+    ];
+    parts.forEach(([className, text]) => {
+      const span = document.createElement('span');
+      span.className = className;
+      span.textContent = text;
+      if (text === '→') span.setAttribute('aria-hidden', 'true');
+      nextButton.append(span);
+    });
+    nextButton.addEventListener('click', () => {
+      select(i + 1);
+      // Focus moves to the newly selected tab (this button just vanished
+      // along with its panel). If the top of the bench has scrolled away,
+      // which is the usual case on a phone, bring it back so the new
+      // project is read from its start.
+      next.tab.focus({ preventScroll: true });
+      if (bench.getBoundingClientRect().top < 0) {
+        bench.scrollIntoView({ behavior: reducedMotionQuery.matches ? 'auto' : 'smooth' });
+      }
+    });
+    const foot = document.createElement('div');
+    foot.className = 'specimen__foot';
+    foot.append(nextButton);
+    project.panel.append(foot);
+  });
+
+  // Arrow keys select as they move (automatic activation): every panel is
+  // already in the page, so there's nothing to wait for.
+  list.addEventListener('keydown', (event) => {
+    const index = projects.findIndex((p) => p.tab === document.activeElement);
+    if (index < 0) return;
+    const step = { ArrowDown: 1, ArrowRight: 1, ArrowUp: -1, ArrowLeft: -1 }[event.key];
+    let next;
+    if (step) next = index + step;
+    else if (event.key === 'Home') next = 0;
+    else if (event.key === 'End') next = projects.length - 1;
+    else return;
+    event.preventDefault();
+    select(next);
+    projects[state.index].tab.focus();
+  });
+
+  // A link to #project-… (shared, bookmarked, or from elsewhere on the page)
+  // selects that project.
+  function selectFromHash() {
+    const index = projects.findIndex((p) => `#${p.panel.id}` === window.location.hash);
+    if (index >= 0) select(index);
+  }
+  window.addEventListener('hashchange', selectFromHash);
+
+  bench.classList.add('is-enhanced');
+  render();
+  selectFromHash();
+}
+
+// ===================================================================
+// Pause off-screen decorative loops — the hero clock's sweep/pulse and the
+// About rail's traveling glow run forever, so each
 // container marked `data-pause-offscreen` (index.html) gets `is-offscreen`
 // while it's scrolled out of view, and style.css pauses its infinite
 // animations. They resume exactly where they stopped, so there's no
@@ -779,6 +925,7 @@ function initProfilePhotoFallback() {
   initScrollSpy,
   initRevealAnimations,
   initHeroGraphic,
+  initWorkBench,
   initOffscreenAnimationPause,
   initProfilePhotoFallback,
 ].forEach((init) => {

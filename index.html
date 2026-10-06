@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta
     name="description"
-    content="Nakerra Lewis — Software Engineer. Clean, responsive websites for small businesses and independent brands."
+    content="Nakerra Lewis — Software Engineer in Philadelphia. I build websites and web applications, and improve the ones that already exist."
   />
   <title>Nakerra Lewis — Software Engineer</title>
 
@@ -18,14 +18,14 @@
   <meta property="og:title" content="Nakerra Lewis — Software Engineer" />
   <meta
     property="og:description"
-    content="Clean, responsive websites for small businesses and independent brands."
+    content="Software Engineer in Philadelphia. Websites and web applications, built carefully — and existing ones made better."
   />
   <meta property="og:locale" content="en_US" />
   <meta name="twitter:card" content="summary" />
   <meta name="twitter:title" content="Nakerra Lewis — Software Engineer" />
   <meta
     name="twitter:description"
-    content="Clean, responsive websites for small businesses and independent brands."
+    content="Software Engineer in Philadelphia. Websites and web applications, built carefully — and existing ones made better."
   />
 
   <link rel="icon" type="image/svg+xml" href="assets/images/favicon.svg" />
@@ -102,7 +102,7 @@
 
           <div class="hero__actions">
             <a href="#work" class="btn btn-primary">View my work</a>
-            <a href="#contact" class="text-link hero__secondary-link">Work with me</a>
+            <a href="#contact" class="text-link hero__secondary-link">Get in touch</a>
           </div>
 
           <dl class="hero__stats">
@@ -115,8 +115,8 @@
               <dd>UX-minded</dd>
             </div>
             <div>
-              <dt class="mono">Focus</dt>
-              <dd>Small business &amp; client sites</dd>
+              <dt class="mono">Builds</dt>
+              <dd>Websites &amp; web apps</dd>
             </div>
             <div>
               <dt class="mono">Currently</dt>
@@ -317,7 +317,8 @@
                 <h3 class="about__timeline-title">Software Engineer</h3>
                 <p class="about__timeline-description">
                   Building software professionally, and taking on freelance
-                  website work for small businesses and independent brands.
+                  work — websites, web applications, and improving what's
+                  already there.
                 </p>
               </div>
             </li>
@@ -327,6 +328,16 @@
     </section>
 
     <!-- ============ WORK ============ -->
+    <!-- The "specimen bench". As shipped here it's plain content: an index of
+         links that jump to three full project write-ups, each with its inside
+         (what's in it, my part, notes) already showing — that's exactly what
+         visitors get without JavaScript. script.js (initWorkBench) upgrades it:
+         the index becomes a tablist showing one project at a time, and each
+         project's inside folds behind a "Look inside" toggle.
+
+         To add a project: copy one index <li> and one <article class="specimen">,
+         give the article a new id, and point the index link's href at it.
+         Preview images are 1280×800 screenshots in assets/images/work-*.webp. -->
     <section id="work" class="section work">
       <div class="container">
         <div class="section-heading" data-reveal>
@@ -338,175 +349,365 @@
           </p>
           <h2 class="section-heading__title">Selected work</h2>
           <p class="section-heading__description">
-            Website projects I've built to put my skills into practice —
-            from initial concept to a finished, working site.
+            Three applications I built on my own, each one live. Every project
+            here has a surface and an inside — open one up to see what it's
+            made of.
           </p>
         </div>
 
-        <div class="work__grid">
-          <!-- Preview images live in assets/images/work-*.png — replace a file
-               (or update its <img src>) whenever a project gets a fresh screenshot,
-               and update that <img>'s width/height to the new file's pixel size. -->
-          <article class="work-card" data-index="01" data-reveal data-reveal-group="work">
-            <a
-              class="work-card__preview"
-              href="https://jwli-info.netlify.app"
-              target="_blank"
-              rel="noreferrer noopener"
-              aria-label="Open the live Japanese Women's Leadership Initiative website"
-            >
-              <span class="work-card__browser-bar" aria-hidden="true">
-                <span class="work-card__dot"></span>
-                <span class="work-card__dot"></span>
-                <span class="work-card__dot"></span>
-                <span class="work-card__browser-url mono">jwli-info.netlify.app</span>
-              </span>
-              <span class="work-card__preview-frame">
-                <img
-                  src="assets/images/work-jwli-preview.png"
-                  alt="Preview of the Japanese Women's Leadership Initiative website"
-                  width="1293"
-                  height="600"
-                  loading="lazy"
-                  class="work-card__preview-img"
-                />
-                <span class="work-card__preview-overlay" aria-hidden="true">
-                  <span class="work-card__preview-cta mono">View live site ↗</span>
-                </span>
-              </span>
-            </a>
-            <div class="work-card__body">
-              <div class="work-card__top">
-                <span class="work-card__index mono">01</span>
-                <span class="work-card__type mono">Nonprofit Website</span>
-              </div>
-              <h3 class="work-card__name">Japanese Women's Leadership Initiative</h3>
-              <p class="work-card__description">
-                An informational website for JWLI, a nonprofit that runs a
-                leadership training program for emerging women leaders from
-                Japan.
-              </p>
-              <div class="work-card__meta">
-                <span class="work-card__role-label mono">Role</span>
-                <span class="work-card__role">Design &amp; development</span>
-              </div>
-              <ul class="work-card__tags">
-                <li class="work-card__tag mono">HTML</li>
-                <li class="work-card__tag mono">CSS</li>
-                <li class="work-card__tag mono">JavaScript</li>
-                <li class="work-card__tag mono">Responsive Design</li>
-              </ul>
-            </div>
-          </article>
+        <div class="bench" data-work-bench data-reveal>
+          <div class="bench__index">
+            <p class="bench__label mono" id="work-index-label">Index</p>
+            <ol class="bench__index-list" aria-labelledby="work-index-label" data-bench-index>
+              <li>
+                <a class="bench__index-item" href="#project-role-radar" data-bench-tab>
+                  <span class="bench__index-code mono">RR-01</span>
+                  <span class="bench__index-name">Role Radar</span>
+                  <span class="bench__index-meta mono">
+                    <span>Job board</span>
+                    <span class="bench__status" data-status="complete">Completed</span>
+                  </span>
+                </a>
+              </li>
+              <li>
+                <a class="bench__index-item" href="#project-philly-artpulse" data-bench-tab>
+                  <span class="bench__index-code mono">AP-02</span>
+                  <span class="bench__index-name">Philly ArtPulse</span>
+                  <span class="bench__index-meta mono">
+                    <span>Public-art game</span>
+                    <span class="bench__status" data-status="in-progress">In progress</span>
+                  </span>
+                </a>
+              </li>
+              <li>
+                <a class="bench__index-item" href="#project-nerd-street-crm" data-bench-tab>
+                  <span class="bench__index-code mono">NS-03</span>
+                  <span class="bench__index-name">Nerd Street CRM</span>
+                  <span class="bench__index-meta mono">
+                    <span>Donor CRM</span>
+                    <span class="bench__status" data-status="complete">Completed</span>
+                  </span>
+                </a>
+              </li>
+            </ol>
+          </div>
 
-          <article class="work-card" data-index="02" data-reveal data-reveal-group="work">
-            <a
-              class="work-card__preview"
-              href="https://lobster-maine.netlify.app"
-              target="_blank"
-              rel="noreferrer noopener"
-              aria-label="Open the live Slack Tide Lobster Shack website"
-            >
-              <span class="work-card__browser-bar" aria-hidden="true">
-                <span class="work-card__dot"></span>
-                <span class="work-card__dot"></span>
-                <span class="work-card__dot"></span>
-                <span class="work-card__browser-url mono">lobster-maine.netlify.app</span>
-              </span>
-              <span class="work-card__preview-frame">
-                <img
-                  src="assets/images/work-lobster-preview.png"
-                  alt="Preview of the Slack Tide Lobster Shack website"
-                  width="1298"
-                  height="598"
-                  loading="lazy"
-                  class="work-card__preview-img"
-                />
-                <span class="work-card__preview-overlay" aria-hidden="true">
-                  <span class="work-card__preview-cta mono">View live site ↗</span>
-                </span>
-              </span>
-            </a>
-            <div class="work-card__body">
-              <div class="work-card__top">
-                <span class="work-card__index mono">02</span>
-                <span class="work-card__type mono">Restaurant Website</span>
-              </div>
-              <h3 class="work-card__name">Slack Tide Lobster Shack</h3>
-              <p class="work-card__description">
-                A small business website for a seasonal lobster restaurant on
-                the wharf in Harpswell, Maine, covering the menu, hours, and
-                location.
+          <div class="bench__specimens">
+            <!-- ---- RR-01 · Role Radar ---- -->
+            <article class="specimen" id="project-role-radar" aria-labelledby="project-role-radar-title">
+              <p class="specimen__head mono">
+                <span class="specimen__code">RR-01</span>
+                <span aria-hidden="true">/</span>
+                <span>Job board</span>
               </p>
-              <div class="work-card__meta">
-                <span class="work-card__role-label mono">Role</span>
-                <span class="work-card__role">Design &amp; development</span>
-              </div>
-              <ul class="work-card__tags">
-                <li class="work-card__tag mono">HTML</li>
-                <li class="work-card__tag mono">CSS</li>
-                <li class="work-card__tag mono">JavaScript</li>
-                <li class="work-card__tag mono">Responsive Design</li>
-              </ul>
-            </div>
-          </article>
 
-          <article class="work-card" data-index="03" data-reveal data-reveal-group="work">
-            <a
-              class="work-card__preview"
-              href="https://philly-water.netlify.app"
-              target="_blank"
-              rel="noreferrer noopener"
-              aria-label="Open the live Two Street Water Ice website"
-            >
-              <span class="work-card__browser-bar" aria-hidden="true">
-                <span class="work-card__dot"></span>
-                <span class="work-card__dot"></span>
-                <span class="work-card__dot"></span>
-                <span class="work-card__browser-url mono">philly-water.netlify.app</span>
-              </span>
-              <span class="work-card__preview-frame">
-                <img
-                  src="assets/images/work-waterice-preview.png"
-                  alt="Preview of the Two Street Water Ice website"
-                  width="1299"
-                  height="597"
-                  loading="lazy"
-                  class="work-card__preview-img"
-                />
-                <span class="work-card__preview-overlay" aria-hidden="true">
-                  <span class="work-card__preview-cta mono">View live site ↗</span>
-                </span>
-              </span>
-            </a>
-            <div class="work-card__body">
-              <div class="work-card__top">
-                <span class="work-card__index mono">03</span>
-                <span class="work-card__type mono">Food Stand Website</span>
+              <div class="specimen__surface">
+                <figure class="specimen__preview">
+                  <span class="specimen__browser-bar" aria-hidden="true">
+                    <span class="specimen__browser-dot"></span>
+                    <span class="specimen__browser-dot"></span>
+                    <span class="specimen__browser-dot"></span>
+                    <span class="specimen__browser-url mono">v0-role-radar-job-board.vercel.app</span>
+                  </span>
+                  <span class="specimen__preview-frame">
+                    <img
+                      src="assets/images/work-role-radar.webp"
+                      alt="Role Radar's home page: a job search panel with Live, Saved and Applied views above a grid of job listings."
+                      width="1280"
+                      height="800"
+                      loading="lazy"
+                      class="specimen__preview-img"
+                    />
+                  </span>
+                  <!-- mouse shortcut to the live site; keyboard and screen-reader
+                       users get the labelled "Visit live site" link instead -->
+                  <a class="specimen__preview-link" href="https://v0-role-radar-job-board.vercel.app/" target="_blank" rel="noreferrer noopener" tabindex="-1" aria-hidden="true"></a>
+                </figure>
+
+                <div class="specimen__summary">
+                  <h3 class="specimen__name" id="project-role-radar-title">Role Radar</h3>
+                  <p class="specimen__lede">
+                    A job board for early-career opportunities — tech, IT,
+                    engineering, internships, fellowships and more — gathered
+                    from multiple sources into one place to search, filter and
+                    track.
+                  </p>
+
+                  <dl class="specimen__facts">
+                    <div>
+                      <dt class="mono">For</dt>
+                      <dd>Early-career students</dd>
+                    </div>
+                    <div>
+                      <dt class="mono">My role</dt>
+                      <dd>Sole developer</dd>
+                    </div>
+                    <div>
+                      <dt class="mono">Built with</dt>
+                      <dd>Next.js · React</dd>
+                    </div>
+                    <div>
+                      <dt class="mono">Status</dt>
+                      <dd><span class="bench__status" data-status="complete">Completed</span></dd>
+                    </div>
+                  </dl>
+
+                  <div class="specimen__actions">
+                    <a class="btn btn-primary" href="https://v0-role-radar-job-board.vercel.app/" target="_blank" rel="noreferrer noopener">
+                      Visit live site<span class="sr-only">: Role Radar, opens in a new tab</span>
+                      <span aria-hidden="true">↗</span>
+                    </a>
+                    <button type="button" class="specimen__toggle" aria-expanded="true" aria-controls="project-role-radar-inside" data-bench-toggle hidden>
+                      <span class="specimen__toggle-icon" aria-hidden="true"></span>
+                      Look inside
+                    </button>
+                  </div>
+                </div>
               </div>
-              <h3 class="work-card__name">Two Street Water Ice</h3>
-              <p class="work-card__description">
-                A small business website for a seasonal water ice stand in
-                Philadelphia's Pennsport neighborhood, covering the menu,
-                hours, and location.
+
+              <div class="specimen__inside" id="project-role-radar-inside" data-bench-inside>
+                <div class="specimen__part specimen__part--wide">
+                  <h4 class="specimen__part-title mono">What's inside</h4>
+                  <ul class="specimen__list">
+                    <li>Live, Saved and Applied views, so a listing can be followed from discovery to application</li>
+                    <li>Search by job title or company, with filters for work type and opportunity type, and a sort order</li>
+                    <li>An AI Summary on every listing, next to Save and Apply</li>
+                    <li>A built-in guided tour and a What's New panel</li>
+                    <li>Listings focused on the Philadelphia region and remote roles</li>
+                  </ul>
+                </div>
+                <div class="specimen__part">
+                  <h4 class="specimen__part-title mono">My part</h4>
+                  <p>I was the sole developer — I built Role Radar myself, including everything listed here.</p>
+                </div>
+                <div class="specimen__part">
+                  <h4 class="specimen__part-title mono">Notes</h4>
+                  <!-- Room for what you learned building it and what you'd improve. -->
+                  <p>Completed, and live on Vercel.</p>
+                </div>
+              </div>
+            </article>
+
+            <!-- ---- AP-02 · Philly ArtPulse ---- -->
+            <article class="specimen" id="project-philly-artpulse" aria-labelledby="project-philly-artpulse-title">
+              <p class="specimen__head mono">
+                <span class="specimen__code">AP-02</span>
+                <span aria-hidden="true">/</span>
+                <span>Public-art game</span>
               </p>
-              <div class="work-card__meta">
-                <span class="work-card__role-label mono">Role</span>
-                <span class="work-card__role">Design &amp; development</span>
+
+              <div class="specimen__surface">
+                <figure class="specimen__preview">
+                  <span class="specimen__browser-bar" aria-hidden="true">
+                    <span class="specimen__browser-dot"></span>
+                    <span class="specimen__browser-dot"></span>
+                    <span class="specimen__browser-dot"></span>
+                    <span class="specimen__browser-url mono">v0-philly-artpulse-app-alpha.vercel.app</span>
+                  </span>
+                  <span class="specimen__preview-frame">
+                    <img
+                      src="assets/images/work-philly-artpulse.webp"
+                      alt="Philly ArtPulse's home page: the title and a Start Hunt button beside a 3D city preview and a clue card."
+                      width="1280"
+                      height="800"
+                      loading="lazy"
+                      class="specimen__preview-img"
+                    />
+                  </span>
+                  <a class="specimen__preview-link" href="https://v0-philly-artpulse-app-alpha.vercel.app/" target="_blank" rel="noreferrer noopener" tabindex="-1" aria-hidden="true"></a>
+                </figure>
+
+                <div class="specimen__summary">
+                  <h3 class="specimen__name" id="project-philly-artpulse-title">Philly ArtPulse</h3>
+                  <p class="specimen__lede">
+                    A gamified scavenger hunt through Philadelphia's public art.
+                    Players follow clues to sculptures, murals and hidden
+                    installations around the city, then unlock the story behind
+                    each piece.
+                  </p>
+
+                  <dl class="specimen__facts">
+                    <div>
+                      <dt class="mono">For</dt>
+                      <dd>Anyone exploring Philly's public art</dd>
+                    </div>
+                    <div>
+                      <dt class="mono">My role</dt>
+                      <dd>Sole developer</dd>
+                    </div>
+                    <div>
+                      <dt class="mono">Built with</dt>
+                      <dd>Next.js · React</dd>
+                    </div>
+                    <div>
+                      <dt class="mono">Status</dt>
+                      <dd><span class="bench__status" data-status="in-progress">In progress</span></dd>
+                    </div>
+                  </dl>
+
+                  <div class="specimen__actions">
+                    <a class="btn btn-primary" href="https://v0-philly-artpulse-app-alpha.vercel.app/" target="_blank" rel="noreferrer noopener">
+                      Visit live site<span class="sr-only">: Philly ArtPulse, opens in a new tab</span>
+                      <span aria-hidden="true">↗</span>
+                    </a>
+                    <button type="button" class="specimen__toggle" aria-expanded="true" aria-controls="project-philly-artpulse-inside" data-bench-toggle hidden>
+                      <span class="specimen__toggle-icon" aria-hidden="true"></span>
+                      Look inside
+                    </button>
+                  </div>
+                </div>
               </div>
-              <ul class="work-card__tags">
-                <li class="work-card__tag mono">HTML</li>
-                <li class="work-card__tag mono">CSS</li>
-                <li class="work-card__tag mono">JavaScript</li>
-                <li class="work-card__tag mono">Responsive Design</li>
-              </ul>
-            </div>
-          </article>
+
+              <div class="specimen__inside" id="project-philly-artpulse-inside" data-bench-inside>
+                <div class="specimen__part specimen__part--wide">
+                  <h4 class="specimen__part-title mono">What's inside</h4>
+                  <ul class="specimen__list">
+                    <li>A clue-based hunt: each artwork starts as a hint about where to stand and what to look for</li>
+                    <li>Points, badges, and a story that unlocks for each artwork</li>
+                    <li>A 3D city preview on the home page</li>
+                    <li>Map and profile views</li>
+                    <li>Guest play with no account required, or sign up to track progress and collect badges</li>
+                  </ul>
+                </div>
+                <div class="specimen__part">
+                  <h4 class="specimen__part-title mono">My part</h4>
+                  <p>I was the sole developer — I built Philly ArtPulse myself.</p>
+                </div>
+                <div class="specimen__part">
+                  <h4 class="specimen__part-title mono">Notes</h4>
+                  <p>Published and live on Vercel — and still in progress. I'm continuing to develop it and add to it.</p>
+                </div>
+              </div>
+            </article>
+
+            <!-- ---- NS-03 · Nerd Street CRM ---- -->
+            <article class="specimen" id="project-nerd-street-crm" aria-labelledby="project-nerd-street-crm-title">
+              <p class="specimen__head mono">
+                <span class="specimen__code">NS-03</span>
+                <span aria-hidden="true">/</span>
+                <span>Donor CRM</span>
+              </p>
+
+              <div class="specimen__surface">
+                <figure class="specimen__preview">
+                  <span class="specimen__browser-bar" aria-hidden="true">
+                    <span class="specimen__browser-dot"></span>
+                    <span class="specimen__browser-dot"></span>
+                    <span class="specimen__browser-dot"></span>
+                    <span class="specimen__browser-url mono">nerd-street-crm.vercel.app</span>
+                  </span>
+                  <span class="specimen__preview-frame">
+                    <img
+                      src="assets/images/work-nerd-street-crm.webp"
+                      alt="Nerd Street CRM's landing page: the headline “Donor Relationships Built for Impact” above three feature summaries."
+                      width="1280"
+                      height="800"
+                      loading="lazy"
+                      class="specimen__preview-img"
+                    />
+                  </span>
+                  <a class="specimen__preview-link" href="https://nerd-street-crm.vercel.app/" target="_blank" rel="noreferrer noopener" tabindex="-1" aria-hidden="true"></a>
+                </figure>
+
+                <div class="specimen__summary">
+                  <h3 class="specimen__name" id="project-nerd-street-crm-title">Nerd Street CRM</h3>
+                  <p class="specimen__lede">
+                    A lightweight donor-management CRM for small nonprofits:
+                    donors, donations and follow-ups in one place, so supporters
+                    aren't forgotten after their first gift.
+                  </p>
+
+                  <dl class="specimen__facts">
+                    <div>
+                      <dt class="mono">For</dt>
+                      <dd>Small nonprofit teams</dd>
+                    </div>
+                    <div>
+                      <dt class="mono">My role</dt>
+                      <dd>Sole developer</dd>
+                    </div>
+                    <div>
+                      <dt class="mono">Built with</dt>
+                      <dd>Next.js · React · Prisma · PostgreSQL</dd>
+                    </div>
+                    <div>
+                      <dt class="mono">Status</dt>
+                      <dd><span class="bench__status" data-status="complete">Completed</span></dd>
+                    </div>
+                  </dl>
+
+                  <div class="specimen__actions">
+                    <a class="btn btn-primary" href="https://nerd-street-crm.vercel.app/" target="_blank" rel="noreferrer noopener">
+                      Visit live site<span class="sr-only">: Nerd Street CRM, opens in a new tab</span>
+                      <span aria-hidden="true">↗</span>
+                    </a>
+                    <button type="button" class="specimen__toggle" aria-expanded="true" aria-controls="project-nerd-street-crm-inside" data-bench-toggle hidden>
+                      <span class="specimen__toggle-icon" aria-hidden="true"></span>
+                      Look inside
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <div class="specimen__inside" id="project-nerd-street-crm-inside" data-bench-inside>
+                <div class="specimen__part specimen__part--wide">
+                  <h4 class="specimen__part-title mono">What's inside</h4>
+                  <ul class="specimen__list">
+                    <li>Donor list with live, debounced search that ranks “starts with” matches first</li>
+                    <li>Donor profiles with full donation history; logging a donation updates the donor's totals</li>
+                    <li>Creating a donor with a first donation saves both in a single database transaction</li>
+                    <li>Sign-in with hashed passwords, and role-based access: admins and team members get different tools</li>
+                    <li>An AI decision summary that asks the model for strict JSON, retries once, and falls back to a local summarizer if the reply still can't be parsed</li>
+                    <li>A test suite run with Vitest</li>
+                  </ul>
+                </div>
+                <div class="specimen__part">
+                  <h4 class="specimen__part-title mono">My part</h4>
+                  <p>I was the sole developer — I built Nerd Street CRM myself, from the database schema to the dashboard.</p>
+                </div>
+                <div class="specimen__part">
+                  <h4 class="specimen__part-title mono">Notes</h4>
+                  <p><span class="specimen__note-label mono">Learned</span> When an app depends on an AI model's output, require a strict output format and plan for the reply being wrong — that's why the summary retries, then falls back.</p>
+                  <p><span class="specimen__note-label mono">Next</span> Keep the AI panel where an admin leaves it between visits, and put raw model replies behind a debug toggle for troubleshooting.</p>
+                </div>
+              </div>
+            </article>
+          </div>
+
+          <!-- Earlier, smaller website projects — kept, but deliberately quieter
+               than the three applications above. -->
+          <div class="bench__earlier">
+            <h3 class="bench__label mono">Earlier work</h3>
+            <p class="bench__earlier-note">Small-business and nonprofit websites.</p>
+            <ul class="bench__earlier-list">
+              <li>
+                <a class="bench__earlier-link" href="https://jwli-info.netlify.app" target="_blank" rel="noreferrer noopener">
+                  <span class="bench__earlier-name">Japanese Women's Leadership Initiative</span>
+                  <span class="bench__earlier-type mono">Nonprofit site <span aria-hidden="true">↗</span></span>
+                </a>
+              </li>
+              <li>
+                <a class="bench__earlier-link" href="https://lobster-maine.netlify.app" target="_blank" rel="noreferrer noopener">
+                  <span class="bench__earlier-name">Slack Tide Lobster Shack</span>
+                  <span class="bench__earlier-type mono">Restaurant site <span aria-hidden="true">↗</span></span>
+                </a>
+              </li>
+              <li>
+                <a class="bench__earlier-link" href="https://philly-water.netlify.app" target="_blank" rel="noreferrer noopener">
+                  <span class="bench__earlier-name">Two Street Water Ice</span>
+                  <span class="bench__earlier-type mono">Food stand site <span aria-hidden="true">↗</span></span>
+                </a>
+              </li>
+            </ul>
+          </div>
         </div>
       </div>
     </section>
 
     <!-- ============ SERVICES ============ -->
+    <!-- A short intro and three steps, no interaction — the Work section is
+         where the detail lives. On wider screens the steps sit as a staircase
+         (style.css, SERVICES). -->
     <section id="services" class="section services">
       <div class="container">
         <div class="section-heading" data-reveal>
@@ -518,90 +719,29 @@
           </p>
           <h2 class="section-heading__title">Work with me</h2>
           <p class="section-heading__description">
-            I'm looking to take on website projects for small businesses and
-            independent brands, with a focus on clear design, usability, and
-            sites that work well for the people using them.
+            I take on freelance software work — websites, web applications,
+            and improving things that already exist. However a project starts,
+            I approach it the same way.
           </p>
         </div>
 
-        <div class="services__grid">
-          <article class="service-card" data-reveal data-reveal-group="services">
-            <div class="service-card__top">
-              <span class="service-card__icon" aria-hidden="true">
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--color-accent)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
-                  <rect x="3" y="4" width="18" height="16" rx="2" />
-                  <line x1="3" y1="9" x2="21" y2="9" />
-                  <line x1="7.5" y1="9" x2="7.5" y2="20" />
-                </svg>
-              </span>
-              <span class="service-card__index mono">01</span>
-            </div>
-            <h3 class="service-card__title">Small Business Websites</h3>
-            <p class="service-card__description">
-              I can create a clean, professional website that clearly
-              communicates what your business offers, what makes it
-              different, and how people can get in touch — built to be easy
-              for you to maintain.
-            </p>
-          </article>
-
-          <article class="service-card" data-reveal data-reveal-group="services">
-            <div class="service-card__top">
-              <span class="service-card__icon" aria-hidden="true">
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--color-accent)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M3 12a9 9 0 1 1 3.4 7.05" />
-                  <polyline points="3 16.5 3 20.5 7 20.5" />
-                </svg>
-              </span>
-              <span class="service-card__index mono">02</span>
-            </div>
-            <h3 class="service-card__title">Website Refreshes &amp; Redesigns</h3>
-            <p class="service-card__description">
-              I can refresh a site that's fallen behind — updated design,
-              clearer structure, and a faster, more usable experience.
-            </p>
-          </article>
-
-          <article class="service-card" data-reveal data-reveal-group="services">
-            <div class="service-card__top">
-              <span class="service-card__icon" aria-hidden="true">
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--color-accent)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
-                  <rect x="2.5" y="5" width="13" height="10" rx="1.5" />
-                  <rect x="13.5" y="10.5" width="8" height="10.5" rx="1.5" />
-                </svg>
-              </span>
-              <span class="service-card__index mono">03</span>
-            </div>
-            <h3 class="service-card__title">Responsive Improvements</h3>
-            <p class="service-card__description">
-              If your site struggles on phones or tablets, I can rework the
-              layout so it holds up on every screen size.
-            </p>
-          </article>
-
-          <article class="service-card" data-reveal data-reveal-group="services">
-            <div class="service-card__top">
-              <span class="service-card__icon" aria-hidden="true">
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--color-accent)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
-                  <line x1="4" y1="6" x2="20" y2="6" />
-                  <circle cx="9" cy="6" r="1.8" fill="var(--color-surface)" />
-                  <line x1="4" y1="12" x2="20" y2="12" />
-                  <circle cx="15.5" cy="12" r="1.8" fill="var(--color-surface)" />
-                  <line x1="4" y1="18" x2="20" y2="18" />
-                  <circle cx="11.5" cy="18" r="1.8" fill="var(--color-surface)" />
-                </svg>
-              </span>
-              <span class="service-card__index mono">04</span>
-            </div>
-            <h3 class="service-card__title">UX / Interface Polish</h3>
-            <p class="service-card__description">
-              I can go over an existing site to tighten navigation, spacing,
-              and flow so it's genuinely easy for people to use.
-            </p>
-          </article>
-        </div>
-
-        <p class="services__note" data-reveal>Currently taking on a limited number of freelance projects.</p>
+        <ol class="stages" data-reveal>
+          <li class="stage">
+            <p class="stage__num mono"><span class="stage__index">01</span></p>
+            <h3 class="stage__title">Understand</h3>
+            <p class="stage__text">Figure out what it needs to do, and who it needs to work for.</p>
+          </li>
+          <li class="stage">
+            <p class="stage__num mono"><span class="stage__index">02</span></p>
+            <h3 class="stage__title">Build</h3>
+            <p class="stage__text">Turn that into a website, an application, or an interface — logic first.</p>
+          </li>
+          <li class="stage">
+            <p class="stage__num mono"><span class="stage__index">03</span></p>
+            <h3 class="stage__title">Refine</h3>
+            <p class="stage__text">Make sure it holds up on every screen, and for the way people actually use it.</p>
+          </li>
+        </ol>
       </div>
     </section>
 
@@ -623,8 +763,7 @@
             <span class="experience__current-label mono">Currently</span>
             <p>
               Currently working as a Software Engineer and taking on
-              freelance website work for small businesses and independent
-              brands.
+              freelance work — websites and web applications.
             </p>
 
             <div class="experience__skills">
@@ -701,7 +840,9 @@
     </section>
 
     <!-- ============ CONTACT ============ -->
-    <section id="contact" class="section contact" data-pause-offscreen>
+    <!-- The ending: a closing statement on the left, the ways to reach me on
+         the right, with email as the primary action. -->
+    <section id="contact" class="section contact">
       <div class="container">
         <div class="section-heading" data-reveal>
           <p class="section-heading__eyebrow mono">
@@ -712,51 +853,61 @@
           </p>
         </div>
 
-        <div class="contact__panel-wrap">
-          <div class="contact__panel" data-reveal>
-            <div class="contact__glow" aria-hidden="true"></div>
-            <span class="pill contact__badge">
-              <span class="pill__dot" aria-hidden="true"></span>
-              Open to freelance &amp; client work
-            </span>
-
-            <h2 class="contact__title">Have a project in mind? Let's build it.</h2>
+        <div class="contact__grid">
+          <div class="contact__statement" data-reveal>
+            <h2 class="contact__title">Let's build something worth getting right.</h2>
             <p class="contact__description">
-              I take on a limited number of freelance projects at a time — if
-              you need a website that's clean, fast, and actually works for
-              your business, I'd love to hear about it.
+              If you have something that needs building, or something that
+              isn't working the way it should, I'd love to hear about it.
             </p>
+            <p class="contact__status">
+              <span class="pill__dot" aria-hidden="true"></span>
+              Open to freelance &amp; client work.
+            </p>
+          </div>
 
-            <ul class="contact__links">
-              <li>
-                <a href="mailto:lewisnakerra@gmail.com" class="contact__link">
-                  <span class="contact__link-icon contact__link-icon--email" aria-hidden="true">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
-                      <rect x="3" y="5" width="18" height="14" rx="2" />
-                      <path d="m4 7 8 6 8-6" />
-                    </svg>
-                  </span>
-                  <span class="contact__link-text">lewisnakerra@gmail.com</span>
-                </a>
-              </li>
+          <div class="contact__actions" data-reveal>
+            <a href="mailto:lewisnakerra@gmail.com" class="contact__primary">
+              <span class="contact__primary-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+                  <rect x="3" y="5" width="18" height="14" rx="2" />
+                  <path d="m4 7 8 6 8-6" />
+                </svg>
+              </span>
+              <span class="contact__primary-text">
+                <span class="contact__primary-label mono">Email me</span>
+                <span class="contact__primary-address">lewisnakerra@gmail.com</span>
+              </span>
+              <span class="contact__primary-arrow" aria-hidden="true">→</span>
+            </a>
+
+            <ul class="contact__elsewhere" aria-label="Elsewhere">
               <li>
                 <a href="https://github.com/Nlewi-glitch089" target="_blank" rel="noreferrer noopener" class="contact__link">
-                  <span class="contact__link-icon contact__link-icon--github" aria-hidden="true">
+                  <span class="contact__link-icon" aria-hidden="true">
                     <svg viewBox="0 0 24 24" fill="currentColor">
                       <path d="M12 .5C5.73.5.5 5.73.5 12c0 5.09 3.29 9.4 7.86 10.93.57.1.78-.25.78-.55 0-.27-.01-1.16-.02-2.11-3.2.7-3.88-1.36-3.88-1.36-.53-1.34-1.29-1.7-1.29-1.7-1.05-.72.08-.71.08-.71 1.16.08 1.77 1.19 1.77 1.19 1.03 1.77 2.7 1.26 3.36.96.1-.75.4-1.26.73-1.55-2.56-.29-5.26-1.28-5.26-5.7 0-1.26.45-2.29 1.19-3.1-.12-.29-.52-1.46.11-3.04 0 0 .97-.31 3.18 1.18a11 11 0 0 1 2.9-.39c.98.01 1.97.13 2.9.39 2.2-1.49 3.17-1.18 3.17-1.18.63 1.58.24 2.75.11 3.04.74.81 1.19 1.84 1.19 3.1 0 4.43-2.7 5.41-5.28 5.69.42.36.79 1.08.79 2.17 0 1.57-.01 2.83-.01 3.22 0 .3.2.66.79.55A10.99 10.99 0 0 0 23.5 12C23.5 5.73 18.27.5 12 .5z" />
                     </svg>
                   </span>
-                  <span class="contact__link-text">github.com/Nlewi-glitch089</span>
+                  <span class="contact__link-text">
+                    <span class="contact__link-label mono">GitHub</span>
+                    <span class="contact__link-handle">github.com/Nlewi-glitch089</span>
+                  </span>
+                  <span class="contact__link-arrow" aria-hidden="true">↗</span><span class="sr-only">(opens in a new tab)</span>
                 </a>
               </li>
               <li>
                 <a href="https://www.linkedin.com/in/nakerra-lewis-027827318/" target="_blank" rel="noreferrer noopener" class="contact__link">
-                  <span class="contact__link-icon contact__link-icon--linkedin" aria-hidden="true">
+                  <span class="contact__link-icon" aria-hidden="true">
                     <svg viewBox="0 0 24 24" fill="currentColor">
                       <path d="M20.45 20.45h-3.55v-5.57c0-1.33-.03-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.36V9h3.41v1.56h.05c.48-.9 1.64-1.85 3.38-1.85 3.6 0 4.27 2.37 4.27 5.46v6.28zM5.34 7.43a2.06 2.06 0 1 1 0-4.12 2.06 2.06 0 0 1 0 4.12zM7.12 20.45H3.56V9h3.56v11.45z" />
                     </svg>
                   </span>
-                  <span class="contact__link-text">linkedin.com/in/nakerra-lewis</span>
+                  <span class="contact__link-text">
+                    <span class="contact__link-label mono">LinkedIn</span>
+                    <span class="contact__link-handle">linkedin.com/in/nakerra-lewis</span>
+                  </span>
+                  <span class="contact__link-arrow" aria-hidden="true">↗</span><span class="sr-only">(opens in a new tab)</span>
                 </a>
               </li>
             </ul>

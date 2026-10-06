@@ -31,7 +31,7 @@ This is a plain, foundational front-end project — no frameworks, no build tool
 
 - **HTML5** — semantic markup, all content lives directly in `index.html`
 - **CSS3** — one stylesheet (`style.css`), organized by section, using CSS custom properties for the color system
-- **Vanilla JavaScript** — one script (`script.js`), loaded as a plain classic script (not an ES module, so the site still works when `index.html` is opened directly from disk). Each feature has its own `init…()` function: footer year, mobile menu, scrollspy nav highlighting, scroll-reveal animations, the interactive hero graphic (and its cursor tilt), pausing off-screen animations, and the profile-photo fallback. Each one checks for the elements it needs and quietly skips itself if they're missing, and an unexpected error in one feature is logged to the console without stopping the others.
+- **Vanilla JavaScript** — one script (`script.js`), loaded as a plain classic script (not an ES module, so the site still works when `index.html` is opened directly from disk). Each feature has its own `init…()` function: footer year, mobile menu, scrollspy nav highlighting, scroll-reveal animations, the interactive hero graphic (and its cursor tilt), the Work section's project bench, pausing off-screen animations, and the profile-photo fallback. Each one checks for the elements it needs and quietly skips itself if they're missing, and an unexpected error in one feature is logged to the console without stopping the others.
 
 ## Getting Started
 
@@ -64,15 +64,15 @@ Every section of the page (Hero, About, Work, Services, Experience, Contact) liv
 
 **Hero clock nodes** — the nodes are listed in `HERO_NODES` near the top of the hero section of `script.js`: one object per node with its label, panel title/text, color, and `x`/`y` position in the SVG's 420×420 coordinate space. The connector line, label placement, and the angle the hand points to are all calculated from that position, so adding a node means adding one object. Also update the short no-JavaScript fallback list in the hero's panel in `index.html`, which shows the same values as plain text.
 
-**Projects** — find the `<!-- ============ WORK ============ -->` section in `index.html`. Each project is an `<article class="work-card">` block — copy one, edit the name/description/role/tags, and add a link if the project has a live URL or repo. Each card's preview image lives in `assets/images/work-*.png`; swap the file (or update its `<img src>`) whenever a project gets a fresh screenshot — a ~2.15:1 crop matches the existing frame best — and update that `<img>`'s `width`/`height` to the new screenshot's pixel size.
+**Projects** — find the `<!-- ============ WORK ============ -->` section in `index.html`. The Work section is a "specimen bench": an index of projects beside one featured project at a time. Each project is two pieces: a row in the index (`<a class="bench__index-item" href="#project-…">`) and an `<article class="specimen" id="project-…">` with its surface (preview, summary, facts, live link) and its inside (`.specimen__inside`: what's in it, my part, notes). To add one, copy both, give the article a new `id`, and point the index link's `href` at it — `initWorkBench()` in `script.js` builds the tabs, the "Look inside" toggle, and the "Next" buttons from whatever is there. Without JavaScript, the index links simply jump to each project, with everything visible. Preview images are 1280×800 screenshots in `assets/images/work-*.webp`; keep that size (or update the `<img>`'s `width`/`height`). Smaller earlier projects go in the `.bench__earlier` list.
 
-**Services** — find the `<!-- ============ SERVICES ============ -->` section. Each service is an `<article class="service-card">` block.
+**Services** — find the `<!-- ============ SERVICES ============ -->` section: a short intro and three steps (`.stage`: Understand, Build, Refine), each a title and one sentence.
 
 **Skills** — find the `<!-- ============ EXPERIENCE & SKILLS ============ -->` section and edit the `.skill-group` blocks.
 
 **Working principles** — in the same Experience section, edit the `.experience__principle` list items ("What I bring to a project").
 
-**Contact links** — find the `<!-- ============ CONTACT ============ -->` section and update the email `mailto:` link and the GitHub/LinkedIn URLs.
+**Contact links** — find the `<!-- ============ CONTACT ============ -->` section and update the email `mailto:` link (the primary action, `.contact__primary`) and the GitHub/LinkedIn URLs (`.contact__link`).
 
 **Navigation** — the nav links live in the `<header>` at the top of `index.html`, once for the desktop nav and once for the mobile menu — keep both lists in sync. Each link's `href="#id"` must match the `id` on the section it should scroll to. The 900px breakpoint where the mobile menu switches to the inline nav is defined in both `style.css` and `script.js` (`desktopNavQuery`); change them together.
 
