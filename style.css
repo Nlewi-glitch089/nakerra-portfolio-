@@ -165,7 +165,6 @@ section[id],
 /* Infinite decorative loops pause while their container is scrolled out of
    view (script.js toggles .is-offscreen on [data-pause-offscreen]). They
    resume exactly where they stopped, so nothing visibly changes. */
-.is-offscreen .technical-graphic__hand,
 .is-offscreen .technical-graphic__center,
 .is-offscreen .hero__eyebrow-dot,
 .is-offscreen .contact__glow,
@@ -708,11 +707,14 @@ section[id],
   isolation: isolate;
 }
 
+/* `container-type` lets the node buttons size their dots in "SVG units" (see
+   --u below), so they scale with the drawing exactly like the SVG does. */
 .hero__graphic-frame {
   position: relative;
   width: 100%;
   max-width: min(260px, 78vw);
   will-change: transform;
+  container-type: inline-size;
 }
 
 /* small reticle marks echoing a technical viewfinder, hugging the frame
@@ -752,31 +754,33 @@ section[id],
   letter-spacing: 0.04em;
 }
 
-/* rotating sweep lines: a slow-moving scan across the diagram */
+/* Clock hands. script.js sets each hand's rotation (current Philadelphia
+   time at rest; the minute hand points at a node when one is selected).
+   Transitions are switched on only after the first render (.is-ready), so
+   the hands don't sweep into place on page load. */
 .technical-graphic__hand {
   transform-box: view-box;
   transform-origin: 210px 210px;
 }
 
-.technical-graphic__hand--fast {
-  animation: tg-rotate 9s linear infinite;
+.technical-graphic__hand--minute {
   filter: drop-shadow(0 0 3px rgba(108, 151, 242, 0.45));
 }
 
-.technical-graphic__hand--slow {
-  animation: tg-rotate 70s linear infinite;
+.technical-graphic.is-ready .technical-graphic__hand {
+  transition: transform 0.7s var(--ease-out), opacity 0.35s ease;
+}
+
+/* while the minute hand is pointing at a node, the hour hand steps back so
+   the clock no longer reads as a time */
+.technical-graphic.has-active .technical-graphic__hand--hour {
+  opacity: 0.2;
 }
 
 .technical-graphic__center {
   transform-box: fill-box;
   transform-origin: center;
   animation: tg-pulse 3.2s ease-in-out infinite;
-}
-
-@keyframes tg-rotate {
-  to {
-    transform: rotate(360deg);
-  }
 }
 
 @keyframes tg-pulse {
@@ -795,9 +799,9 @@ section[id],
    just structural; selecting a node highlights its own connector and quiets
    the rest, so the diagram visibly "points to" the active story. */
 .technical-graphic__connector {
-  /* resting stroke/width come from the line's own attributes in the markup
-     (kept varied — two accent, one neutral — for the original composition);
-     this rule only needs to own the transition and the active override. */
+  /* resting stroke/width are set per node by script.js (kept varied — two
+     accent, one neutral — for the original composition); this rule only
+     needs to own the transition and the active override. */
   transition: stroke 0.35s ease, stroke-width 0.35s ease, opacity 0.35s ease;
 }
 
@@ -811,66 +815,127 @@ section[id],
   opacity: 0.35;
 }
 
-/* interactive nodes: generous invisible hit area for touch, visible dot stays small */
-.technical-graphic__node {
-  cursor: pointer;
+/* ---- node buttons (HTML, layered over the SVG) ----
+   --u is one SVG viewBox unit expressed in CSS: 1/420th of the frame's width
+   (script.js sets --clock-size from the viewBox). Dots and label offsets are
+   multiples of it, so they keep the drawing's proportions at every size,
+   while the hit area and label text use real pixels so they never shrink
+   below a usable size on small screens. 1px is the fallback for browsers
+   without container query units (the drawing's full desktop scale). */
+.hero__nodes {
+  --u: 1px;
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
 }
 
-.technical-graphic__node-hit {
-  fill: transparent;
+@supports (width: 1cqw) {
+  .hero__nodes {
+    --u: calc(100cqw / var(--clock-size, 420));
+  }
 }
 
-.technical-graphic__node-dot {
-  transition: r 0.25s var(--ease-out), filter 0.25s ease;
+.hero__node {
+  position: absolute;
+  left: var(--x);
+  top: var(--y);
+  /* 48 units = the original hit circle (r=24); never smaller than 44px */
+  width: max(44px, calc(48 * var(--u)));
+  height: max(44px, calc(48 * var(--u)));
+  transform: translate(-50%, -50%);
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--color-accent);
+  pointer-events: auto;
+  -webkit-tap-highlight-color: transparent;
 }
 
-.technical-graphic__node-label {
+.hero__node[data-tone='warm'] {
+  color: var(--color-warm);
+}
+
+/* a tight ring around the dot rather than the full square hit area */
+.hero__node:focus-visible {
+  outline-offset: -12px;
+  border-radius: 50%;
+}
+
+/* the visible dot: same geometry as the original SVG circle (r=5 with a
+   1.5-unit stroke centered on it, so 11.5 units across its outside edge) */
+.hero__node-dot {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: calc(11.5 * var(--u));
+  height: calc(11.5 * var(--u));
+  transform: translate(-50%, -50%);
+  border: calc(1.5 * var(--u)) solid currentColor;
+  border-radius: 50%;
+  background: var(--color-bg);
+  transition: width 0.25s var(--ease-out), height 0.25s var(--ease-out), filter 0.25s ease;
+}
+
+.hero__node-label {
+  position: absolute;
+  /* placement is calculated per node in script.js: offset to one side of
+     the node, clear of its connector line and of the pointing hand */
+  left: calc(50% + var(--label-x, 0) * var(--u));
+  top: calc(50% + var(--label-y, 0) * var(--u));
+  transform: translate(var(--label-shift-x, 0), calc(var(--label-shift-y, 0) + 4px));
+  font-family: var(--font-mono);
+  font-size: 11px;
+  line-height: 1;
+  letter-spacing: 0.04em;
+  white-space: nowrap;
   opacity: 0;
-  transform: translateY(4px);
-  transform-box: fill-box;
-  transform-origin: center;
   transition: opacity 0.3s ease, transform 0.3s var(--ease-out);
 }
 
-.technical-graphic__node:hover .technical-graphic__node-dot,
-.technical-graphic__node:focus-visible .technical-graphic__node-dot,
-.technical-graphic__node.is-active .technical-graphic__node-dot {
-  r: 6.5;
-  filter: drop-shadow(0 0 6px currentColor);
+.hero__node:hover .hero__node-dot,
+.hero__node:focus-visible .hero__node-dot,
+.hero__node.is-active .hero__node-dot {
+  /* r = 6.5 */
+  width: calc(14.5 * var(--u));
+  height: calc(14.5 * var(--u));
+  filter: drop-shadow(0 0 calc(6 * var(--u)) currentColor);
 }
 
-.technical-graphic__node:hover .technical-graphic__node-label,
-.technical-graphic__node:focus-visible .technical-graphic__node-label,
-.technical-graphic__node.is-active .technical-graphic__node-label {
+.hero__node:hover .hero__node-label,
+.hero__node:focus-visible .hero__node-label,
+.hero__node.is-active .hero__node-label {
   opacity: 1;
-  transform: translateY(0);
-}
-
-.technical-graphic__node:focus-visible .technical-graphic__node-dot {
-  outline: none;
+  transform: translate(var(--label-shift-x, 0), var(--label-shift-y, 0));
 }
 
 /* a brief one-shot settle animation when a node becomes active, so the
    selection reads as an event rather than a static state change */
-.technical-graphic__node.is-active .technical-graphic__node-dot {
-  animation: tg-select 0.4s var(--ease-out);
+.hero__node.is-active .hero__node-dot {
+  animation: hero-node-select 0.4s var(--ease-out);
 }
 
-@keyframes tg-select {
+@keyframes hero-node-select {
   0% {
-    r: 5;
+    width: calc(11.5 * var(--u));
+    height: calc(11.5 * var(--u));
   }
   50% {
-    r: 8;
+    /* r = 8 */
+    width: calc(17.5 * var(--u));
+    height: calc(17.5 * var(--u));
   }
   100% {
-    r: 6.5;
+    width: calc(14.5 * var(--u));
+    height: calc(14.5 * var(--u));
   }
 }
 
-/* Resting hint / selected-node story, directly below the graphic. Fixed
-   min-height keeps the layout stable as text length changes between nodes. */
+/* Resting time readout / selected-node story, directly below the graphic.
+   Fixed min-height keeps the layout stable as the panel switches between
+   them — every state (a title plus up to two lines) fits inside it. */
 .hero__graphic-panel {
+  position: relative;
   width: 100%;
   max-width: 34ch;
   margin-top: 1rem;
@@ -879,7 +944,11 @@ section[id],
   transition: opacity 0.15s ease;
 }
 
-/* brief crossfade while script.js swaps the title/text between nodes */
+.hero__graphic-panel [hidden] {
+  display: none;
+}
+
+/* brief crossfade while script.js swaps between the readout and a story */
 .hero__graphic-panel.is-transitioning {
   opacity: 0;
 }
@@ -905,6 +974,51 @@ section[id],
 }
 
 .hero__graphic-panel.has-selection .hero__graphic-panel-text {
+  color: var(--color-text-muted);
+}
+
+/* "Back to clock": a small cross in the panel's top corner, level with the
+   story title. Positioned out of flow so it adds no height to the panel;
+   28px square keeps it comfortably tappable without looking like a button. */
+.hero__graphic-panel-reset {
+  position: absolute;
+  top: -5px;
+  right: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  color: var(--color-text-subtle);
+  transition: color 0.2s ease, border-color 0.2s ease;
+}
+
+.hero__graphic-panel-reset:hover {
+  color: var(--color-text);
+  border-color: var(--color-border);
+}
+
+/* no-JS fallback list (removed by script.js once the clock is running) */
+.hero__graphic-fallback {
+  display: grid;
+  gap: 0.6rem;
+  margin: 0;
+  font-size: 0.85rem;
+  line-height: 1.5;
+}
+
+.hero__graphic-fallback dt {
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-accent);
+}
+
+.hero__graphic-fallback dd {
+  margin: 0;
   color: var(--color-text-muted);
 }
 

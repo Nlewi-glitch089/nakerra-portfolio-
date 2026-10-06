@@ -15,7 +15,7 @@ It's built to be a long-term site I keep using and updating — not a one-off as
 ## Features
 
 - Single-page layout with smooth-scrolling navigation between sections, with the current section highlighted in both the desktop nav and the mobile menu
-- Interactive hero graphic — keyboard- and touch-accessible nodes that reveal short stories in a panel below it
+- Interactive hero clock — at rest it shows the current time in Philadelphia; selecting a node (mouse, touch, or keyboard) swings the hand to point at it and tells its story in the panel below
 - Subtle scroll-reveal animations, paused decorative loops when off-screen, and full `prefers-reduced-motion` support
 - Fully responsive design (mobile, tablet, desktop)
 - Selected work section showcasing real projects
@@ -62,7 +62,7 @@ Every section of the page (Hero, About, Work, Services, Experience, Contact) liv
 
 **Your photo** — the photo sits at the top of the About section (the `about__intro` block inside `<!-- ============ ABOUT ============ -->`). Replace `assets/images/Solstice Summit Headshot.JPG` with a new file and update the `<img src>` to match (or overwrite the same filename), and set the `<img>`'s `width`/`height` to the new file's pixel dimensions. If the file is ever missing, it automatically falls back to `assets/images/profile-placeholder.svg` instead of showing a broken image.
 
-**Hero graphic** — each node in the hero SVG (`<!-- ============ HERO ============ -->`) carries its own `data-title` / `data-text`; edit those attributes to change what a node reveals — no JavaScript changes needed.
+**Hero clock nodes** — the nodes are listed in `HERO_NODES` near the top of the hero section of `script.js`: one object per node with its label, panel title/text, color, and `x`/`y` position in the SVG's 420×420 coordinate space. The connector line, label placement, and the angle the hand points to are all calculated from that position, so adding a node means adding one object. Also update the short no-JavaScript fallback list in the hero's panel in `index.html`, which shows the same values as plain text.
 
 **Projects** — find the `<!-- ============ WORK ============ -->` section in `index.html`. Each project is an `<article class="work-card">` block — copy one, edit the name/description/role/tags, and add a link if the project has a live URL or repo. Each card's preview image lives in `assets/images/work-*.png`; swap the file (or update its `<img src>`) whenever a project gets a fresh screenshot — a ~2.15:1 crop matches the existing frame best — and update that `<img>`'s `width`/`height` to the new screenshot's pixel size.
 

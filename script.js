@@ -172,54 +172,387 @@ function initRevealAnimations() {
 }
 
 // ===================================================================
-// Hero graphic — the signature interactive diagram
+// Hero graphic — node content
 //
-// Each node carries its own content as `data-title`/`data-text` attributes
-// (see index.html) — to change what a node reveals, edit those attributes,
-// not this file.
+// One object per node on the clock. `x` / `y` are the node's position in
+// the SVG's own 420×420 viewBox — the same units as the rings and ticks in
+// index.html. Everything else about a node's drawing is derived from that
+// position: its connector line, where its label sits, and the angle the
+// minute hand swings to when it's selected.
 //
-// Two layers of behavior:
-//  1. Hover/focus previews a node's short SVG label (pure CSS, see
-//     style.css) — a quick, low-commitment preview.
-//  2. Click, tap, or Enter/Space opens that node's full story in the panel
-//     below the graphic, highlights its connector line, and dims the
-//     others. Activating a different node smoothly swaps the panel
-//     content. On pointer-capable, non-touch devices a subtle parallax
-//     tilt also responds to cursor position for a sense of depth.
+//   id             unique; used to build element ids
+//   label          short mono label shown on hover / focus / selection
+//   title, text    the story shown in the panel when the node is selected
+//   tone           dot color: 'accent' or 'warm' (warm stays on one node)
+//   connectorTone  connector line color: 'accent', 'warm' or 'border'
+//
+// Array order is the Tab and arrow-key order, so keep it running clockwise.
+// To add a node, add one object here — plus its line in the no-JS fallback
+// list in index.html, which mirrors this content for visitors without JS.
+// ===================================================================
+const HERO_NODES = [
+  {
+    id: 'curiosity',
+    label: 'curiosity',
+    title: 'Curiosity',
+    text: 'Always starting with “how does this work?”',
+    x: 120,
+    y: 130,
+    tone: 'warm',
+    connectorTone: 'warm',
+  },
+  {
+    id: 'design',
+    label: 'design',
+    title: 'Design',
+    text: 'Good software should make sense.',
+    x: 300,
+    y: 160,
+    tone: 'accent',
+    connectorTone: 'accent',
+  },
+  {
+    id: 'intention',
+    label: 'intention',
+    title: 'Intention',
+    text: "If something works simply, I don't see a reason to complicate it.",
+    x: 150,
+    y: 300,
+    tone: 'accent',
+    connectorTone: 'border',
+  },
+];
+
+// The clock always shows Philadelphia time, whatever the visitor's own zone.
+const CLOCK_TIME_ZONE = 'America/New_York';
+
+// ===================================================================
+// Clock geometry
+// ===================================================================
+
+// The clock-face angle of a direction in SVG space, in degrees clockwise
+// from 12 o'clock (0–360) — the same convention as the hands' rotation.
+//
+// Math.atan2(y, x) gives the textbook angle: counter-clockwise from the +x
+// axis (3 o'clock), with y pointing up. SVG differs in two ways: its y axis
+// points down, and CSS rotate() turns clockwise; clock angles also start at
+// 12, not 3. Calling atan2(dx, -dy) covers all of that at once — swapping
+// the arguments measures from the vertical axis instead of the horizontal
+// one, and negating dy turns SVG's "down" back into "up". Result: straight
+// up is 0°, 3 o'clock is 90°, 6 o'clock 180°, 9 o'clock 270°.
+function clockAngle(dx, dy) {
+  const degrees = (Math.atan2(dx, -dy) * 180) / Math.PI;
+  return (degrees + 360) % 360;
+}
+
+// Where a node's label goes, relative to the node. Not along the node's
+// radius — the connector runs inward along it and the pointing hand runs
+// outward — but perpendicular to it, on whichever side is higher on the
+// clock. Returns an offset in SVG units, plus how to anchor the text at
+// that point so it grows away from the node.
+function labelPlacement(dx, dy, gap) {
+  const length = Math.hypot(dx, dy) || 1;
+  const ux = dx / length;
+  const uy = dy / length;
+  // the two perpendiculars to (ux, uy) are (-uy, ux) and (uy, -ux)
+  let px = -uy;
+  let py = ux;
+  if (py > 0 || (py === 0 && px < 0)) {
+    px = uy;
+    py = -ux;
+  }
+  return {
+    x: px * gap,
+    y: py * gap,
+    shiftX: px >= 0 ? '0%' : '-100%',
+    shiftY: py < 0 ? '-100%' : '0%',
+  };
+}
+
+// ===================================================================
+// Philadelphia time
+// ===================================================================
+
+// Returns a function that reads the current time in Philadelphia, or null
+// if this browser can't format that time zone. Every reading starts from
+// Date.now() — a UTC timestamp — and Intl converts it, so neither the
+// visitor's time zone nor a change to it while the page is open matters.
+function createPhiladelphiaTimeReader() {
+  let partsFormat;
+  let labelFormat;
+  try {
+    partsFormat = new Intl.DateTimeFormat('en-US', {
+      timeZone: CLOCK_TIME_ZONE,
+      hour: 'numeric',
+      minute: 'numeric',
+      hourCycle: 'h23',
+    });
+    labelFormat = new Intl.DateTimeFormat('en-US', {
+      timeZone: CLOCK_TIME_ZONE,
+      hour: 'numeric',
+      minute: '2-digit',
+    });
+  } catch (error) {
+    console.warn('[portfolio] Philadelphia time is unavailable here; the clock will stay static.', error);
+    return null;
+  }
+
+  const pad = (n) => String(n).padStart(2, '0');
+
+  return () => {
+    const now = Date.now();
+    const parts = {};
+    partsFormat.formatToParts(now).forEach(({ type, value }) => {
+      parts[type] = value;
+    });
+    // % 24 guards older engines that report midnight as "24" even with h23
+    const hours = Number(parts.hour) % 24;
+    const minutes = Number(parts.minute);
+    if (!Number.isFinite(hours) || !Number.isFinite(minutes)) return null;
+
+    return {
+      hours,
+      minutes,
+      label: labelFormat.format(now),
+      datetime: `${pad(hours)}:${pad(minutes)}`,
+    };
+  };
+}
+
+// Calls `onTick` just after each minute boundary while the page is visible.
+// One timer a minute, not a second: the clock only shows hours and minutes.
+// Each tick re-reads the real time instead of counting minutes, so it can't
+// drift. A hidden tab clears its timer entirely (background timers are
+// throttled and can't be trusted to fire on time) and re-reads the time the
+// moment the tab is visible again.
+function startMinuteTicker(onTick) {
+  let timer = null;
+
+  function schedule() {
+    window.clearTimeout(timer);
+    if (document.hidden) return;
+    // America/New_York is a whole-hour offset from UTC, so its minutes roll
+    // over exactly when the UTC timestamp crosses a minute boundary. The extra
+    // 50ms makes sure the tick lands just after the boundary, never before it.
+    const msUntilNextMinute = 60000 - (Date.now() % 60000);
+    timer = window.setTimeout(() => {
+      onTick();
+      schedule();
+    }, msUntilNextMinute + 50);
+  }
+
+  function resync() {
+    onTick();
+    schedule();
+  }
+
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden) {
+      window.clearTimeout(timer);
+    } else {
+      resync();
+    }
+  });
+  // restored from the back/forward cache: the old timer is meaningless
+  window.addEventListener('pageshow', (event) => {
+    if (event.persisted) resync();
+  });
+
+  schedule();
+}
+
+// ===================================================================
+// Hero graphic — the signature interactive instrument
+//
+// Two states, both rendered from one small state object:
+//  - time  (state.activeId === null): the hands show the current time in
+//    Philadelphia, and the panel below reads it out.
+//  - node  (state.activeId set): the minute hand swings to point at the
+//    selected node, its connector lights up, and the panel tells its story.
+//
+// Nodes are HTML <button>s generated from HERO_NODES and laid over the
+// decorative SVG. Hover/focus previews a node's label (pure CSS); click,
+// tap, Enter or Space selects it; selecting it again, Escape, or "Back to
+// clock" returns to the time. Arrow keys move focus around the nodes.
 // All motion is skipped under prefers-reduced-motion.
 // ===================================================================
 function initHeroGraphic() {
   const heroGraphic = document.querySelector('.hero__graphic');
-  const heroFrame = document.querySelector('.hero__graphic-frame');
-  const technicalGraphic = document.querySelector('.technical-graphic');
-  const graphicNodes = [...document.querySelectorAll('.technical-graphic__node')];
-  const graphicConnectors = [...document.querySelectorAll('.technical-graphic__connector')];
-  const graphicPanel = document.querySelector('.hero__graphic-panel');
-  const panelTitle = document.querySelector('[data-panel-title]');
-  const panelText = document.querySelector('[data-panel-text]');
+  if (!heroGraphic) return;
 
-  if (!heroGraphic || !technicalGraphic || !graphicNodes.length) return;
-  if (!graphicPanel || !panelTitle || !panelText) return;
+  const find = (selector) => heroGraphic.querySelector(selector);
+  const heroFrame = find('.hero__graphic-frame');
+  const technicalGraphic = find('.technical-graphic');
+  const minuteHandEl = find('[data-hand="minute"]');
+  const hourHandEl = find('[data-hand="hour"]');
+  const connectorGroup = find('[data-hero-connectors]');
+  const nodeGroup = find('[data-hero-nodes]');
+  const panel = find('#hero-graphic-panel');
+  const readout = find('[data-clock-readout]');
+  const readoutTitle = find('[data-clock-title]');
+  const readoutTime = find('[data-clock-time]');
+  const story = find('[data-clock-story]');
+  const resetButton = find('[data-clock-reset]');
 
-  const PANEL_DEFAULT_TITLE = 'Explore';
-  const PANEL_DEFAULT_TEXT = 'Click or tap a node to explore.';
+  const required = [technicalGraphic, minuteHandEl, hourHandEl, connectorGroup, nodeGroup, panel, readout, readoutTitle, story, resetButton];
+  if (required.some((el) => !el)) return;
 
-  let activeIndex = null;
+  // ---- geometry, from the SVG's own viewBox ----
+  const viewBox = technicalGraphic.viewBox.baseVal;
+  if (!viewBox || !viewBox.width || !viewBox.height) return;
+  const center = { x: viewBox.x + viewBox.width / 2, y: viewBox.y + viewBox.height / 2 };
+  nodeGroup.style.setProperty('--clock-size', viewBox.width);
+
+  const SVG_NS = 'http://www.w3.org/2000/svg';
+  const LABEL_GAP = 13; // SVG units between a node's center and its label
+  const CONNECTOR_STROKES = {
+    accent: 'var(--color-accent)',
+    warm: 'var(--color-warm)',
+    border: 'var(--color-border)',
+  };
+
+  // ---- hands ----
+  // Each hand rotates relative to the direction it's drawn in, read from its
+  // own line coordinates, so the markup can draw it at any resting angle.
+  function createHand(el) {
+    const restAngle = clockAngle(
+      el.x2.baseVal.value - el.x1.baseVal.value,
+      el.y2.baseVal.value - el.y1.baseVal.value
+    );
+    return { el, restAngle, angle: restAngle };
+  }
+  const hands = { minute: createHand(minuteHandEl), hour: createHand(hourHandEl) };
+
+  function pointHand(hand, targetAngle) {
+    // turn the shorter way round: 350° → 10° is +20°, not −340°. The hand's
+    // angle keeps counting past 360 so the CSS transition never spins back.
+    const delta = ((((targetAngle - hand.angle) % 360) + 540) % 360) - 180;
+    hand.angle += delta;
+    hand.el.style.transform = `rotate(${hand.angle - hand.restAngle}deg)`;
+  }
+
+  // ---- nodes, rendered from HERO_NODES ----
+  const seenIds = new Set();
+  const isValidNode = (data) => {
+    const ok =
+      data &&
+      typeof data.id === 'string' &&
+      !seenIds.has(data.id) &&
+      Number.isFinite(data.x) &&
+      Number.isFinite(data.y) &&
+      typeof data.label === 'string' &&
+      typeof data.title === 'string' &&
+      typeof data.text === 'string';
+    if (!ok) console.warn('[portfolio] Skipping an invalid or duplicate HERO_NODES entry:', data);
+    else seenIds.add(data.id);
+    return ok;
+  };
+
+  const nodes = HERO_NODES.filter(isValidNode).map((data) => {
+    const dx = data.x - center.x;
+    const dy = data.y - center.y;
+
+    const connector = document.createElementNS(SVG_NS, 'line');
+    connector.setAttribute('class', 'technical-graphic__connector');
+    connector.setAttribute('x1', center.x);
+    connector.setAttribute('y1', center.y);
+    connector.setAttribute('x2', data.x);
+    connector.setAttribute('y2', data.y);
+    connector.setAttribute('stroke', CONNECTOR_STROKES[data.connectorTone] || CONNECTOR_STROKES.border);
+    connector.setAttribute('stroke-width', '1.5');
+    connectorGroup.append(connector);
+
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.className = 'hero__node';
+    button.id = `hero-node-${data.id}`;
+    button.dataset.tone = data.tone === 'warm' ? 'warm' : 'accent';
+    button.setAttribute('aria-expanded', 'false');
+    button.setAttribute('aria-controls', panel.id);
+    button.style.setProperty('--x', `${((data.x - viewBox.x) / viewBox.width) * 100}%`);
+    button.style.setProperty('--y', `${((data.y - viewBox.y) / viewBox.height) * 100}%`);
+
+    const place = labelPlacement(dx, dy, LABEL_GAP);
+    button.style.setProperty('--label-x', place.x.toFixed(2));
+    button.style.setProperty('--label-y', place.y.toFixed(2));
+    button.style.setProperty('--label-shift-x', place.shiftX);
+    button.style.setProperty('--label-shift-y', place.shiftY);
+
+    const dot = document.createElement('span');
+    dot.className = 'hero__node-dot';
+    dot.setAttribute('aria-hidden', 'true');
+    const label = document.createElement('span');
+    label.className = 'hero__node-label';
+    label.textContent = data.label; // also the button's accessible name
+
+    button.append(dot, label);
+    nodeGroup.append(button);
+
+    return { ...data, angle: clockAngle(dx, dy), button, connector };
+  });
+  if (!nodes.length) return;
+
+  // ---- state ----
+  const readTime = createPhiladelphiaTimeReader();
+  const state = {
+    activeId: null, // null = "time" mode; a node id = "node" mode
+    time: readTime ? readTime() : null,
+  };
+  const activeNode = () => nodes.find((node) => node.id === state.activeId) || null;
+
+  // ---- rendering ----
+  // The drawing (cheap; also re-run every minute) and the panel (crossfades,
+  // so only re-run when the selection changes) render separately.
+  function renderGraphic() {
+    const active = activeNode();
+
+    nodes.forEach((node) => {
+      const isActive = node === active;
+      node.button.classList.toggle('is-active', isActive);
+      node.button.setAttribute('aria-expanded', String(isActive));
+      node.connector.classList.toggle('is-active', isActive);
+    });
+    technicalGraphic.classList.toggle('has-active', Boolean(active));
+
+    const { time } = state;
+    if (time) {
+      pointHand(hands.hour, (time.hours % 12) * 30 + time.minutes * 0.5);
+      if (readoutTime) {
+        readoutTime.textContent = time.label;
+        readoutTime.dateTime = time.datetime;
+      }
+    }
+    if (active) {
+      pointHand(hands.minute, active.angle);
+    } else if (time) {
+      pointHand(hands.minute, time.minutes * 6);
+    } else {
+      pointHand(hands.minute, hands.minute.restAngle);
+    }
+  }
+
   let panelTimer = null;
 
-  function renderPanel() {
-    const node = activeIndex === null ? null : graphicNodes[activeIndex];
+  function renderPanel({ instant = false } = {}) {
+    const active = activeNode();
 
     const applyContent = () => {
-      if (node) {
-        panelTitle.textContent = node.dataset.title;
-        panelText.textContent = node.dataset.text;
-        graphicPanel.classList.add('has-selection');
-      } else {
-        panelTitle.textContent = PANEL_DEFAULT_TITLE;
-        panelText.textContent = PANEL_DEFAULT_TEXT;
-        graphicPanel.classList.remove('has-selection');
+      readout.hidden = Boolean(active);
+      resetButton.hidden = !active;
+      panel.classList.toggle('has-selection', Boolean(active));
+
+      if (!active) {
+        story.replaceChildren();
+        return;
       }
+      // filling the live region is what announces the story to screen readers
+      const title = document.createElement('p');
+      title.className = 'hero__graphic-panel-title mono';
+      title.textContent = active.title;
+      const text = document.createElement('p');
+      text.className = 'hero__graphic-panel-text';
+      text.textContent = active.text;
+      story.replaceChildren(title, text);
     };
 
     // Cancel any crossfade still in flight, so rapid clicks across several
@@ -230,52 +563,93 @@ function initHeroGraphic() {
 
     // Brief crossfade so switching between nodes reads as a smooth transition
     // rather than a jump cut; skipped entirely under reduced motion.
-    if (reducedMotionQuery.matches) {
-      graphicPanel.classList.remove('is-transitioning');
+    if (instant || reducedMotionQuery.matches) {
+      panel.classList.remove('is-transitioning');
       applyContent();
       return;
     }
-    graphicPanel.classList.add('is-transitioning');
+    panel.classList.add('is-transitioning');
     panelTimer = window.setTimeout(() => {
       panelTimer = null;
       applyContent();
-      graphicPanel.classList.remove('is-transitioning');
+      panel.classList.remove('is-transitioning');
     }, 150);
   }
 
-  function setActiveIndex(index) {
-    activeIndex = index;
-    graphicNodes.forEach((node, i) => node.classList.toggle('is-active', i === index));
-    graphicConnectors.forEach((line, i) => line.classList.toggle('is-active', i === index));
-    technicalGraphic.classList.toggle('has-active', index !== null);
+  function select(id) {
+    state.activeId = id;
+    renderGraphic();
     renderPanel();
   }
 
-  graphicNodes.forEach((node, index) => {
-    // Click/tap toggles this node open (or closed, if it's already the
-    // active one) and is the single source of truth for `is-active` — a
-    // 'focus' handler here would double-set the same state, since focus
-    // always fires just before click for a pointer interaction.
-    node.addEventListener('click', () => {
-      setActiveIndex(activeIndex === index ? null : index);
-    });
+  // Back to time mode. When focus was inside the panel (on the "Back to
+  // clock" button, which is about to disappear), hand it back to the node
+  // that was open so keyboard users stay where they were.
+  function deselect() {
+    const active = activeNode();
+    if (!active) return;
+    if (panel.contains(document.activeElement)) active.button.focus();
+    select(null);
+  }
 
-    // SVG <g> elements don't get automatic Enter/Space activation the way a
-    // real <button> would, so it's wired up explicitly for keyboard users.
-    node.addEventListener('keydown', (event) => {
-      if (event.key === 'Enter' || event.key === ' ') {
-        event.preventDefault();
-        setActiveIndex(activeIndex === index ? null : index);
-      }
+  // ---- events ----
+  nodes.forEach((node) => {
+    // click/tap/Enter/Space all arrive as 'click' on a real <button>;
+    // choosing the open node again closes it
+    node.button.addEventListener('click', () => {
+      select(state.activeId === node.id ? null : node.id);
     });
   });
 
-  // clicking anywhere else on the graphic (not a node) closes the open story
-  heroGraphic.addEventListener('pointerdown', (event) => {
-    if (!event.target.closest('.technical-graphic__node')) {
-      setActiveIndex(null);
-    }
+  // Arrow keys move focus around the clock (wrapping), in HERO_NODES order.
+  // They don't select — like hovering, they preview a node's label, and
+  // Enter/Space opens it — so focus and selection stay predictable.
+  nodeGroup.addEventListener('keydown', (event) => {
+    const index = nodes.findIndex((node) => node.button === document.activeElement);
+    if (index < 0) return;
+    const step = { ArrowRight: 1, ArrowDown: 1, ArrowLeft: -1, ArrowUp: -1 }[event.key];
+    let next;
+    if (step) next = (index + step + nodes.length) % nodes.length;
+    else if (event.key === 'Home') next = 0;
+    else if (event.key === 'End') next = nodes.length - 1;
+    else return;
+    event.preventDefault();
+    nodes[next].button.focus();
   });
+
+  // Escape returns to the clock while the visitor is using it: focus inside
+  // the graphic or its panel, or on nothing in particular (Safari doesn't
+  // focus buttons on click, so a mouse user's focus is often just <body>).
+  document.addEventListener('keydown', (event) => {
+    if (event.key !== 'Escape' || state.activeId === null) return;
+    const focused = document.activeElement;
+    if (focused && focused !== document.body && !heroGraphic.contains(focused)) return;
+    deselect();
+  });
+
+  resetButton.addEventListener('click', deselect);
+
+  // ---- first render ----
+  if (!readTime) {
+    // no time zone support: keep the original resting hint instead of a time
+    readoutTitle.textContent = 'Explore';
+  }
+  find('[data-clock-fallback]')?.remove();
+  renderGraphic();
+  renderPanel({ instant: true });
+
+  // Hand transitions switch on only after this first pose has been painted,
+  // so the hands appear at the right time instead of sweeping there on load.
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => technicalGraphic.classList.add('is-ready'));
+  });
+
+  if (readTime) {
+    startMinuteTicker(() => {
+      state.time = readTime();
+      renderGraphic();
+    });
+  }
 
   if (heroFrame) initHeroTilt(heroGraphic, heroFrame);
 }
