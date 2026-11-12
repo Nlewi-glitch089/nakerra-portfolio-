@@ -105,3 +105,20 @@ Typography pairs a system sans-serif for body copy and headings with a monospace
 ## Notes
 
 This site is actively maintained as my personal portfolio and freelance site. Project and contact information should stay current — see **Customization** above for where to update it.
+
+
+## Hosting and deployment
+
+This is a static HTML, CSS, and JavaScript site. It has no build step, backend, or environment variables, so it can be hosted on any static-site provider.
+
+### Deploy with Netlify
+
+1. Push the repository to GitHub.
+2. Sign in to [Netlify](https://app.netlify.com/) and choose **Add new site → Import an existing project**.
+3. Connect GitHub and select this repository.
+4. Leave the build command empty and set the publish directory to the repository root (`.`).
+5. Deploy. Netlify will provide a site URL; add the stable custom domain or production URL here once it is confirmed.
+
+You can also test the site locally by opening `index.html` or using VS Code Live Server, as described above.
+
+There is no verified public deployment URL recorded in this repository yet. Once deployed, update the Open Graph `og:url` and `og:image` metadata in `index.html` with the real absolute URLs so shared links have a proper preview.
