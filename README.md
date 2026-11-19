@@ -121,4 +121,6 @@ This is a static HTML, CSS, and JavaScript site. It has no build step, backend, 
 
 You can also test the site locally by opening `index.html` or using VS Code Live Server, as described above.
 
-There is no verified public deployment URL recorded in this repository yet. Once deployed, update the Open Graph `og:url` and `og:image` metadata in `index.html` with the real absolute URLs so shared links have a proper preview.
+**Live site:** [nakerra-portfolio.netlify.app](https://nakerra-portfolio.netlify.app/)
+
+The portfolio is deployed on Netlify. Keep the Open Graph `og:url` and `og:image` metadata in `index.html` aligned with the production URL and preview image.
